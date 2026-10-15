@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { repo } from '../data';
 import { ConfirmDelete, IconButton, Screen, Section, ValueRow, useBack } from '../ui/components';
-import { formatDate, t, weatherLabels } from '../ui/i18n';
+import { useI18n } from '../ui/i18n';
 import { percentValue, pressureValue, springRateValue, temperatureValue, weightValue } from '../ui/format';
 
 type Row = [string, string] | null;
 
 function DetailSection({ title, rows }: { title: string; rows: Row[] }) {
+  const { t } = useI18n();
   const present = rows.filter((row): row is [string, string] => row !== null);
   return (
     <Section title={title}>
@@ -24,6 +25,7 @@ const row = <T,>(label: string, value: T | null, format: (v: T) => string): Row 
   value === null || value === '' ? null : [label, format(value)];
 
 export function SetupDetailPage() {
+  const { t, formatDate } = useI18n();
   const { setupId = '' } = useParams();
   const navigate = useNavigate();
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -63,9 +65,9 @@ export function SetupDetailPage() {
               rows={[
                 [t.fieldLocation, item.locationName ?? t.setupNoLocation],
                 [t.fieldDate, formatDate(setup.ridingDate)],
-                row(t.fieldWeather, setup.weather, (w) => weatherLabels[w]),
+                row(t.fieldWeather, setup.weather, (w) => t.weathers[w]),
                 row(t.fieldTemperature, setup.temperatureC, temperatureValue),
-                row(t.fieldRiderWeight, setup.riderWeightKg, (kg) => weightValue(kg, settings.weightUnit)),
+                row(t.fieldRiderWeight, setup.riderWeightKg, (kg) => weightValue(kg, settings.weightUnit, t.weightUnits[settings.weightUnit])),
               ]}
             />
             <DetailSection

@@ -4,8 +4,16 @@ import { repo } from '../data';
 import { PRESSURE_UNITS, WEIGHT_UNITS } from '../data/model';
 import { ImportFormatError } from '../data/repository';
 import { todayIso } from '../data/units';
-import { Screen, Section, Segmented, useBack, useToast } from '../ui/components';
-import { pressureUnitLabels, t, weightUnitLabels } from '../ui/i18n';
+import { Screen, Section, Segmented, SelectField, useBack, useToast } from '../ui/components';
+import {
+  LANGUAGE_NAMES,
+  LANGUAGES,
+  setLanguagePreference,
+  useI18n,
+  useLanguagePreference,
+  type LanguagePreference,
+} from '../ui/i18n';
+import { pressureUnitLabels } from '../ui/format';
 import { Icon } from '../ui/Icon';
 
 async function shareOrDownload(file: File): Promise<void> {
@@ -28,6 +36,8 @@ async function shareOrDownload(file: File): Promise<void> {
 }
 
 export function SettingsPage() {
+  const { t } = useI18n();
+  const languagePreference = useLanguagePreference();
   const back = useBack('/');
   const settings = useLiveQuery(() => repo.getSettings(), []);
   const [persistent, setPersistent] = useState<boolean | null>(null);
@@ -57,6 +67,17 @@ export function SettingsPage() {
     <Screen title={t.settingsTitle} onBack={back}>
       {settings && (
         <div className="form">
+          <Section title={t.settingsLanguage}>
+            <SelectField<LanguagePreference>
+              label={t.settingsLanguage}
+              value={languagePreference}
+              options={[
+                { value: 'auto', label: t.languageAuto },
+                ...LANGUAGES.map((language) => ({ value: language, label: LANGUAGE_NAMES[language] })),
+              ]}
+              onChange={setLanguagePreference}
+            />
+          </Section>
           <Section title={t.settingsUnits}>
             <Segmented
               label={t.settingsSuspensionPressure}
@@ -73,7 +94,7 @@ export function SettingsPage() {
             <Segmented
               label={t.settingsWeight}
               value={settings.weightUnit}
-              options={WEIGHT_UNITS.map((value) => ({ value, label: weightUnitLabels[value] }))}
+              options={WEIGHT_UNITS.map((value) => ({ value, label: t.weightUnits[value] }))}
               onChange={(value) => void repo.saveSetting('weightUnit', value)}
             />
             <p className="muted small">{t.settingsUnitsHint}</p>

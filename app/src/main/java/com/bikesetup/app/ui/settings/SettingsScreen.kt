@@ -1,5 +1,6 @@
 package com.bikesetup.app.ui.settings
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,8 +28,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bikesetup.app.R
 import com.bikesetup.app.data.model.PressureUnit
 import com.bikesetup.app.data.model.WeightUnit
+import com.bikesetup.app.ui.common.AppLanguage
+import com.bikesetup.app.ui.common.appLanguage
 import com.bikesetup.app.ui.common.labelRes
+import com.bikesetup.app.ui.common.saveAppLanguage
 import com.bikesetup.app.ui.components.BackButton
+import com.bikesetup.app.ui.components.DropdownField
 import com.bikesetup.app.ui.components.SectionCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,6 +41,8 @@ import com.bikesetup.app.ui.components.SectionCard
 fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val activity = LocalActivity.current
+    val language = remember { context.appLanguage() }
     val versionName = remember {
         context.packageManager.getPackageInfo(context.packageName, 0).versionName.orEmpty()
     }
@@ -53,6 +60,21 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
                 modifier = Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                SectionCard(title = stringResource(R.string.settings_language)) {
+                    DropdownField(
+                        label = stringResource(R.string.settings_language),
+                        options = AppLanguage.entries,
+                        selected = language,
+                        optionLabel = { stringResource(it.labelRes) },
+                        onSelect = { selected ->
+                            if (selected != language) {
+                                context.saveAppLanguage(selected)
+                                activity?.recreate()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
                 SectionCard(title = stringResource(R.string.settings_units)) {
                     UnitChoice(
                         title = stringResource(R.string.settings_suspension_pressure),

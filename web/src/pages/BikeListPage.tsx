@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router';
 import { repo } from '../data';
 import type { BikeWithStats } from '../data/model';
 import { EmptyState, Fab, IconButton, Screen } from '../ui/components';
-import { bikeTypeLabels, formatDate, setupCount, t, wheelSizeLabels } from '../ui/i18n';
+import { useI18n } from '../ui/i18n';
 import { BikeGlyph } from '../ui/Icon';
 import { InstallHint } from '../ui/InstallHint';
 
 export function BikeListPage() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const bikes = useLiveQuery(() => repo.bikesWithStats(), []);
   return (
@@ -31,6 +32,7 @@ export function BikeListPage() {
 }
 
 function BikeCard({ item, onOpen }: { item: BikeWithStats; onOpen: () => void }) {
+  const { t, formatDate, setupCount } = useI18n();
   const { bike } = item;
   const components = [bike.forkModel, bike.shockType === 'NONE' ? '' : bike.shockModel].filter((c) => c.trim() !== '');
   return (
@@ -41,7 +43,7 @@ function BikeCard({ item, onOpen }: { item: BikeWithStats; onOpen: () => void })
       <span className="list-card-text">
         <strong>{bike.name}</strong>
         <span className="muted">
-          {bikeTypeLabels[bike.type]} · {wheelSizeLabels[bike.wheelSize]}
+          {t.bikeTypes[bike.type]} · {t.wheelSizes[bike.wheelSize]}
         </span>
         {components.length > 0 && <span className="muted small">{components.join(' / ')}</span>}
         <span className="accent small">

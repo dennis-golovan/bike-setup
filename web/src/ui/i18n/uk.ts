@@ -1,6 +1,9 @@
-import type { BikeType, PressureUnit, ShockType, TerrainType, Weather, WeightUnit, WheelSize } from '../data/model';
+import type { BikeType, ShockType, TerrainType, Weather, WeightUnit, WheelSize } from '../../data/model';
 
-export const t = {
+export type PluralForms = Partial<Record<Intl.LDMLPluralRule, string>> & { other: string };
+
+export const uk = {
+  locale: 'uk-UA',
   back: 'Назад',
   cancel: 'Скасувати',
   delete: 'Видалити',
@@ -132,70 +135,48 @@ export const t = {
   installAndroid: 'Додай застосунок на головний екран: він відкриватиметься на весь екран і працюватиме без інтернету.',
   installButton: 'Встановити',
   installDismiss: 'Зрозуміло',
-} as const;
 
-export const bikeTypeLabels: Record<BikeType, string> = {
-  TRAIL: 'Trail',
-  ENDURO: 'Enduro',
-  DOWNHILL: 'Downhill',
-  XC: 'XC',
-  DIRT_JUMP: 'Dirt / Street',
-  E_BIKE: 'E-bike',
-  OTHER: 'Інший',
+  settingsLanguage: 'Мова',
+  languageAuto: 'Як на пристрої',
+
+  bikeTypes: {
+    TRAIL: 'Trail',
+    ENDURO: 'Enduro',
+    DOWNHILL: 'Downhill',
+    XC: 'XC',
+    DIRT_JUMP: 'Dirt / Street',
+    E_BIKE: 'E-bike',
+    OTHER: 'Інший',
+  } satisfies Record<BikeType, string>,
+  wheelSizes: {
+    TWENTY_NINE: '29"',
+    TWENTY_SEVEN_FIVE: '27.5"',
+    MULLET: 'Mullet (29/27.5)',
+    TWENTY_SIX: '26"',
+  } satisfies Record<WheelSize, string>,
+  shockTypes: {
+    AIR: 'Повітряний',
+    COIL: 'Пружинний',
+    NONE: 'Немає (хардтейл)',
+  } satisfies Record<ShockType, string>,
+  terrains: {
+    TRAIL: 'Трейл',
+    ENDURO: 'Ендуро-траса',
+    BIKE_PARK: 'Байк-парк',
+    DOWNHILL: 'Даунхіл',
+    XC: 'Крос-кантрі',
+    PUMP_TRACK: 'Памп-трек',
+    OTHER: 'Інше',
+  } satisfies Record<TerrainType, string>,
+  weathers: {
+    DRY: 'Сухо',
+    MIXED: 'Місцями волого',
+    WET: 'Мокро',
+    MUD: 'Багнюка',
+  } satisfies Record<Weather, string>,
+  weightUnits: { KG: 'кг', LB: 'lb' } satisfies Record<WeightUnit, string>,
+  setupForms: { one: '%d сетап', few: '%d сетапи', many: '%d сетапів', other: '%d сетапу' } as PluralForms,
+  tokenForms: { one: '%d токен', few: '%d токени', many: '%d токенів', other: '%d токена' } as PluralForms,
 };
 
-export const wheelSizeLabels: Record<WheelSize, string> = {
-  TWENTY_NINE: '29"',
-  TWENTY_SEVEN_FIVE: '27.5"',
-  MULLET: 'Mullet (29/27.5)',
-  TWENTY_SIX: '26"',
-};
-
-export const shockTypeLabels: Record<ShockType, string> = {
-  AIR: 'Повітряний',
-  COIL: 'Пружинний',
-  NONE: 'Немає (хардтейл)',
-};
-
-export const terrainLabels: Record<TerrainType, string> = {
-  TRAIL: 'Трейл',
-  ENDURO: 'Ендуро-траса',
-  BIKE_PARK: 'Байк-парк',
-  DOWNHILL: 'Даунхіл',
-  XC: 'Крос-кантрі',
-  PUMP_TRACK: 'Памп-трек',
-  OTHER: 'Інше',
-};
-
-export const weatherLabels: Record<Weather, string> = {
-  DRY: 'Сухо',
-  MIXED: 'Місцями волого',
-  WET: 'Мокро',
-  MUD: 'Багнюка',
-};
-
-export const pressureUnitLabels: Record<PressureUnit, string> = { BAR: 'bar', PSI: 'psi' };
-
-export const weightUnitLabels: Record<WeightUnit, string> = { KG: 'кг', LB: 'lb' };
-
-type PluralForms = Record<'one' | 'few' | 'many' | 'other', string>;
-
-const pluralRules = new Intl.PluralRules('uk-UA');
-
-function plural(count: number, forms: PluralForms): string {
-  const category = pluralRules.select(count) as keyof PluralForms;
-  return (forms[category] ?? forms.other).replace('%d', String(count));
-}
-
-export const setupCount = (count: number): string =>
-  plural(count, { one: '%d сетап', few: '%d сетапи', many: '%d сетапів', other: '%d сетапу' });
-
-export const tokenCount = (count: number): string =>
-  plural(count, { one: '%d токен', few: '%d токени', many: '%d токенів', other: '%d токена' });
-
-const dateFormatter = new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'short', year: 'numeric' });
-
-export function formatDate(iso: string): string {
-  const [year, month, day] = iso.split('-').map(Number);
-  return dateFormatter.format(new Date(year, month - 1, day));
-}
+export type Dictionary = typeof uk;

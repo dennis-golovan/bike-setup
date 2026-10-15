@@ -1,13 +1,13 @@
 import type { ForkSettings, Setup, ShockSettings, ShockType, TireSettings, UserSettings } from '../data/model';
-import { formatDate, pressureUnitLabels, t, tokenCount, weatherLabels } from './i18n';
-import { percentValue, pressureNumber, pressureValue, springRateValue, temperatureValue } from './format';
+import { percentValue, pressureNumber, pressureUnitLabels, pressureValue, springRateValue, temperatureValue } from './format';
+import { useI18n, type I18n } from './i18n';
 
 const join = (parts: (string | null)[]): string | null => {
   const present = parts.filter((p): p is string => p !== null);
   return present.length > 0 ? present.join(' · ') : null;
 };
 
-function forkSummary(fork: ForkSettings, settings: UserSettings): string | null {
+function forkSummary(fork: ForkSettings, settings: UserSettings, { tokenCount }: I18n): string | null {
   return join([
     fork.pressureBar === null ? null : pressureValue(fork.pressureBar, settings.suspensionPressureUnit),
     fork.sagPercent === null ? null : `sag ${percentValue(fork.sagPercent)}`,
@@ -15,7 +15,12 @@ function forkSummary(fork: ForkSettings, settings: UserSettings): string | null 
   ]);
 }
 
-function shockSummary(shock: ShockSettings, shockType: ShockType, settings: UserSettings): string | null {
+function shockSummary(
+  shock: ShockSettings,
+  shockType: ShockType,
+  settings: UserSettings,
+  { tokenCount }: I18n,
+): string | null {
   const isAir = shockType === 'AIR';
   return shockType === 'NONE'
     ? null
@@ -27,7 +32,7 @@ function shockSummary(shock: ShockSettings, shockType: ShockType, settings: User
       ]);
 }
 
-function tireSummary(tires: TireSettings, settings: UserSettings): string | null {
+function tireSummary(tires: TireSettings, settings: UserSettings, { t }: I18n): string | null {
   const unit = settings.tirePressureUnit;
   const number = (bar: number | null) => (bar === null ? t.missing : pressureNumber(bar, unit));
   return tires.frontPressureBar === null && tires.rearPressureBar === null
@@ -44,14 +49,16 @@ interface SetupCardProps {
 }
 
 export function SetupCard({ setup, shockType, settings, isCurrent, onOpen }: SetupCardProps) {
+  const i18n = useI18n();
+  const { t, formatDate } = i18n;
   const conditions = [
-    setup.weather === null ? null : weatherLabels[setup.weather],
+    setup.weather === null ? null : t.weathers[setup.weather],
     setup.temperatureC === null ? null : temperatureValue(setup.temperatureC),
   ].filter((c): c is string => c !== null);
   const lines = [
-    [t.summaryFork, forkSummary(setup.fork, settings)],
-    [t.summaryShock, shockSummary(setup.shock, shockType, settings)],
-    [t.summaryTires, tireSummary(setup.tires, settings)],
+    [t.summaryFork, forkSummary(setup.fork, settings, i18n)],
+    [t.summaryShock, shockSummary(setup.shock, shockType, settings, i18n)],
+    [t.summaryTires, tireSummary(setup.tires, settings, i18n)],
   ].filter((line): line is [string, string] => line[1] !== null);
   return (
     <button type="button" className={isCurrent ? 'card setup-card current' : 'card setup-card'} onClick={onOpen}>

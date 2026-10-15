@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { t } from './i18n';
+import { useI18n } from './i18n';
 import { Icon } from './Icon';
 import { dismissInstallHint, isInstallHintDismissed, isIos, isStandalone, useInstallPrompt } from './install';
 
 export function InstallHint() {
+  const { t } = useI18n();
   const install = useInstallPrompt();
   const [hidden, setHidden] = useState(() => isStandalone() || isInstallHintDismissed());
   const ios = isIos();

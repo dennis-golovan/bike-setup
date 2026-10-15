@@ -12,7 +12,7 @@ import {
 } from '../data/model';
 import { newId, nowMillis } from '../data/units';
 import { Screen, SelectField, TextAction, TextField, useBack } from '../ui/components';
-import { bikeTypeLabels, shockTypeLabels, t, wheelSizeLabels } from '../ui/i18n';
+import { useI18n } from '../ui/i18n';
 
 interface BikeForm {
   name: string;
@@ -45,6 +45,7 @@ const toForm = (bike: Bike): BikeForm => ({
 });
 
 export function BikeEditPage() {
+  const { t } = useI18n();
   const { bikeId } = useParams();
   const back = useBack(bikeId ? `/bike/${bikeId}` : '/');
   const [form, setForm] = useState<BikeForm>(EMPTY_FORM);
@@ -92,13 +93,13 @@ export function BikeEditPage() {
           <SelectField
             label={t.bikeType}
             value={form.type}
-            options={BIKE_TYPES.map((value) => ({ value, label: bikeTypeLabels[value] }))}
+            options={BIKE_TYPES.map((value) => ({ value, label: t.bikeTypes[value] }))}
             onChange={(type) => update({ type })}
           />
           <SelectField
             label={t.bikeWheelSize}
             value={form.wheelSize}
-            options={WHEEL_SIZES.map((value) => ({ value, label: wheelSizeLabels[value] }))}
+            options={WHEEL_SIZES.map((value) => ({ value, label: t.wheelSizes[value] }))}
             onChange={(wheelSize) => update({ wheelSize })}
           />
           <TextField
@@ -110,7 +111,7 @@ export function BikeEditPage() {
           <SelectField
             label={t.bikeShockType}
             value={form.shockType}
-            options={SHOCK_TYPES.map((value) => ({ value, label: shockTypeLabels[value] }))}
+            options={SHOCK_TYPES.map((value) => ({ value, label: t.shockTypes[value] }))}
             onChange={(shockType) => update({ shockType })}
           />
           {form.shockType !== 'NONE' && (

@@ -1,7 +1,7 @@
 import { useCallback, useId, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { isCountValid, isDecimalValid, parseCount } from '../data/units';
-import { t } from './i18n';
+import { useI18n } from './i18n';
 import { Icon, type IconName } from './Icon';
 
 export function useBack(fallback: string): () => void {
@@ -34,6 +34,7 @@ interface ScreenProps {
 }
 
 export function Screen({ title, subtitle, onBack, actions, fab, children }: ScreenProps) {
+  const { t } = useI18n();
   return (
     <div className={fab ? 'screen with-fab' : 'screen'}>
       <header className="topbar">
@@ -144,6 +145,7 @@ interface NumberFieldProps {
 }
 
 export function NumberField({ label, value, onChange, suffix, allowNegative, integer }: NumberFieldProps) {
+  const { t } = useI18n();
   const id = useId();
   const valid = integer ? isCountValid(value) : isDecimalValid(value, allowNegative);
   const toggleSign = () => onChange(value.trim().startsWith('-') ? value.trim().slice(1) : `-${value.trim()}`);
@@ -171,6 +173,7 @@ export function NumberField({ label, value, onChange, suffix, allowNegative, int
 }
 
 export function StepperField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+  const { t } = useI18n();
   const id = useId();
   const current = parseCount(value) ?? 0;
   return (
@@ -289,6 +292,7 @@ interface DialogProps {
 }
 
 export function Dialog({ title, children, confirmLabel, onConfirm, onDismiss, danger, confirmDisabled }: DialogProps) {
+  const { t } = useI18n();
   return (
     <div className="scrim" onClick={onDismiss}>
       <div className="dialog" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
@@ -313,6 +317,7 @@ export function Dialog({ title, children, confirmLabel, onConfirm, onDismiss, da
 }
 
 export function ConfirmDelete({ title, text, onConfirm, onDismiss }: { title: string; text: string; onConfirm: () => void; onDismiss: () => void }) {
+  const { t } = useI18n();
   return (
     <Dialog title={title} confirmLabel={t.delete} danger onConfirm={onConfirm} onDismiss={onDismiss}>
       <p>{text}</p>

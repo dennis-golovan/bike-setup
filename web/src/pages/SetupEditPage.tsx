@@ -28,7 +28,8 @@ import {
   TextField,
   useBack,
 } from '../ui/components';
-import { formatDate, pressureUnitLabels, t, terrainLabels, weatherLabels, weightUnitLabels } from '../ui/i18n';
+import { useI18n } from '../ui/i18n';
+import { pressureUnitLabels } from '../ui/format';
 
 const NO_LOCATION = '__none__';
 const NEW_LOCATION = '__new__';
@@ -44,6 +45,7 @@ interface Loaded {
 type Update = (patch: Partial<SetupForm>) => void;
 
 export function SetupEditPage() {
+  const { t, formatDate } = useI18n();
   const params = useParams();
   const [searchParams] = useSearchParams();
   const copyFromId = searchParams.get('copyFrom');
@@ -141,7 +143,7 @@ export function SetupEditPage() {
             <SelectField<Weather | typeof NO_WEATHER>
               label={t.fieldWeather}
               value={form.weather ?? NO_WEATHER}
-              options={[{ value: NO_WEATHER, label: t.notSet }, ...WEATHERS.map((w) => ({ value: w, label: weatherLabels[w] }))]}
+              options={[{ value: NO_WEATHER, label: t.notSet }, ...WEATHERS.map((w) => ({ value: w, label: t.weathers[w] }))]}
               onChange={(value) => update({ weather: value === NO_WEATHER ? null : value })}
             />
             <Row>
@@ -155,7 +157,7 @@ export function SetupEditPage() {
               <NumberField
                 label={t.fieldRiderWeightShort}
                 value={form.riderWeight}
-                suffix={weightUnitLabels[settings.weightUnit]}
+                suffix={t.weightUnits[settings.weightUnit]}
                 onChange={(riderWeight) => update({ riderWeight })}
               />
             </Row>
@@ -234,6 +236,7 @@ export function SetupEditPage() {
 }
 
 function TireSection({ form, settings, update }: { form: SetupForm; settings: UserSettings; update: Update }) {
+  const { t } = useI18n();
   const unit = pressureUnitLabels[settings.tirePressureUnit];
   return (
     <Section title={t.sectionTires}>
@@ -273,6 +276,7 @@ function TireSection({ form, settings, update }: { form: SetupForm; settings: Us
 }
 
 function AddLocationDialog({ onAdd, onDismiss }: { onAdd: (name: string, terrain: TerrainType) => void; onDismiss: () => void }) {
+  const { t } = useI18n();
   const [name, setName] = useState('');
   const [terrain, setTerrain] = useState<TerrainType>('TRAIL');
   return (
@@ -288,7 +292,7 @@ function AddLocationDialog({ onAdd, onDismiss }: { onAdd: (name: string, terrain
         <SelectField
           label={t.locationTerrain}
           value={terrain}
-          options={TERRAIN_TYPES.map((value) => ({ value, label: terrainLabels[value] }))}
+          options={TERRAIN_TYPES.map((value) => ({ value, label: t.terrains[value] }))}
           onChange={setTerrain}
         />
       </div>

@@ -27,7 +27,7 @@ import {
   useBack,
   useToast,
 } from '../ui/components';
-import { t, terrainLabels } from '../ui/i18n';
+import { useI18n } from '../ui/i18n';
 import { Icon } from '../ui/Icon';
 import { isIos } from '../ui/install';
 
@@ -37,6 +37,7 @@ const mapUrl = (latitude: number, longitude: number, name: string): string =>
     : `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
 
 export function LocationEditPage() {
+  const { t } = useI18n();
   const { locationId } = useParams();
   const back = useBack('/locations');
   const [form, setForm] = useState<LocationForm>(emptyLocationForm);
@@ -120,7 +121,7 @@ export function LocationEditPage() {
           <SelectField
             label={t.locationTerrain}
             value={form.terrainType}
-            options={TERRAIN_TYPES.map((value) => ({ value, label: terrainLabels[value] }))}
+            options={TERRAIN_TYPES.map((value) => ({ value, label: t.terrains[value] }))}
             onChange={(terrainType) => update({ terrainType })}
           />
           <Row>

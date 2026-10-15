@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router';
 import { repo } from '../data';
 import type { Bike, Setup, UserSettings } from '../data/model';
 import { ConfirmDelete, EmptyState, Fab, IconButton, Screen, Section, ValueRow, useBack } from '../ui/components';
-import { bikeTypeLabels, shockTypeLabels, t, wheelSizeLabels } from '../ui/i18n';
+import { useI18n } from '../ui/i18n';
 import { Icon } from '../ui/Icon';
 import { SetupCard } from '../ui/SetupCard';
 
@@ -15,6 +15,7 @@ interface SetupGroup {
 }
 
 export function BikeDetailPage() {
+  const { t } = useI18n();
   const { bikeId = '' } = useParams();
   const navigate = useNavigate();
   const back = useBack('/');
@@ -82,12 +83,13 @@ export function BikeDetailPage() {
 }
 
 function BikeInfo({ bike }: { bike: Bike }) {
+  const { t } = useI18n();
   return (
     <Section title={t.bikeInfoTitle}>
-      <ValueRow label={t.bikeType} value={bikeTypeLabels[bike.type]} />
-      <ValueRow label={t.bikeWheelSize} value={wheelSizeLabels[bike.wheelSize]} />
+      <ValueRow label={t.bikeType} value={t.bikeTypes[bike.type]} />
+      <ValueRow label={t.bikeWheelSize} value={t.wheelSizes[bike.wheelSize]} />
       {bike.forkModel && <ValueRow label={t.bikeForkModel} value={bike.forkModel} />}
-      <ValueRow label={t.bikeShockType} value={shockTypeLabels[bike.shockType]} />
+      <ValueRow label={t.bikeShockType} value={t.shockTypes[bike.shockType]} />
       {bike.shockType !== 'NONE' && bike.shockModel && <ValueRow label={t.bikeShockModel} value={bike.shockModel} />}
       {bike.notes && <p className="notes">{bike.notes}</p>}
     </Section>
@@ -95,6 +97,7 @@ function BikeInfo({ bike }: { bike: Bike }) {
 }
 
 function SetupGroupSection({ group, bike, settings }: { group: SetupGroup; bike: Bike; settings: UserSettings }) {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [showHistory, setShowHistory] = useState(false);
   const [latest, ...history] = group.setups;
