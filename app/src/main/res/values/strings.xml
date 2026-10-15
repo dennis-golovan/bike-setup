@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bike Setup</string>
+
+    <string name="action_add">Додати</string>
+    <string name="action_back">Назад</string>
+    <string name="action_cancel">Скасувати</string>
+    <string name="action_decrease">Зменшити</string>
+    <string name="action_delete">Видалити</string>
+    <string name="action_edit">Редагувати</string>
+    <string name="action_increase">Збільшити</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save">Зберегти</string>
+    <string name="yes">Так</string>
+    <string name="no">Ні</string>
+
+    <string name="dot_separated">%1$s · %2$s</string>
+    <string name="value_with_unit">%1$s %2$s</string>
+    <string name="value_percent">%1$s%%</string>
+    <string name="value_celsius">%1$s °C</string>
+    <string name="value_spring_rate">%1$d lbs/in</string>
+    <string name="value_missing">—</string>
+    <string name="value_not_set">Не вказано</string>
+
+    <string name="unit_bar">bar</string>
+    <string name="unit_psi">psi</string>
+    <string name="unit_kg">кг</string>
+    <string name="unit_lb">lb</string>
+    <string name="unit_lbs_in">lbs/in</string>
+    <string name="unit_percent">%</string>
+    <string name="unit_celsius">°C</string>
+
+    <string name="bike_list_title">Мої велосипеди</string>
+    <string name="bike_list_empty">Ще немає жодного велосипеда.\nДодай свій байк, а потім записуй сетапи під кожну місцевість.</string>
+    <string name="bike_add">Велосипед</string>
+    <string name="bike_new_title">Новий велосипед</string>
+    <string name="bike_edit_title">Редагування велосипеда</string>
+    <string name="bike_info_title">Велосипед</string>
+    <string name="bike_name">Назва</string>
+    <string name="bike_name_hint">Напр. Spectral 29</string>
+    <string name="bike_type">Тип</string>
+    <string name="bike_wheel_size">Колеса</string>
+    <string name="bike_fork_model">Вилка</string>
+    <string name="bike_fork_model_hint">Напр. Fox 36 Factory Grip2</string>
+    <string name="bike_shock_type">Амортизатор</string>
+    <string name="bike_shock_model">Модель амортизатора</string>
+    <string name="bike_shock_model_hint">Напр. RockShox Super Deluxe</string>
+    <string name="bike_no_setups_yet">Ще немає сетапів</string>
+    <string name="bike_last_setup">останній %1$s</string>
+    <string name="bike_delete_title">Видалити велосипед?</string>
+    <string name="bike_delete_text">Разом із велосипедом буде видалено всі його сетапи.</string>
+
+    <string name="bike_type_trail">Trail</string>
+    <string name="bike_type_enduro">Enduro</string>
+    <string name="bike_type_downhill">Downhill</string>
+    <string name="bike_type_xc">XC</string>
+    <string name="bike_type_dirt_jump">Dirt / Street</string>
+    <string name="bike_type_e_bike">E-bike</string>
+    <string name="bike_type_other">Інший</string>
+
+    <string name="wheel_29">29\"</string>
+    <string name="wheel_27_5">27.5\"</string>
+    <string name="wheel_mullet">Mullet (29/27.5)</string>
+    <string name="wheel_26">26\"</string>
+
+    <string name="shock_type_air">Повітряний</string>
+    <string name="shock_type_coil">Пружинний</string>
+    <string name="shock_type_none">Немає (хардтейл)</string>
+
+    <string name="terrain_trail">Трейл</string>
+    <string name="terrain_enduro">Ендуро-траса</string>
+    <string name="terrain_bike_park">Байк-парк</string>
+    <string name="terrain_downhill">Даунхіл</string>
+    <string name="terrain_xc">Крос-кантрі</string>
+    <string name="terrain_pump_track">Памп-трек</string>
+    <string name="terrain_other">Інше</string>
+
+    <string name="weather_dry">Сухо</string>
+    <string name="weather_mixed">Місцями волого</string>
+    <string name="weather_wet">Мокро</string>
+    <string name="weather_mud">Багнюка</string>
+
+    <string name="setup_add">Новий сетап</string>
+    <string name="setup_new_title">Новий сетап</string>
+    <string name="setup_edit_title">Редагування сетапу</string>
+    <string name="setup_list_empty">Ще немає сетапів.\nДодай перший: тиск, sag, клацання та шини.</string>
+    <string name="setup_base_group">Базовий сетап</string>
+    <string name="setup_no_location">Без місцевості (базовий)</string>
+    <string name="setup_current">Актуальний</string>
+    <string name="setup_history">Історія (%1$d)</string>
+    <string name="setup_copy">Новий на основі цього</string>
+    <string name="setup_empty_values">Значення не заповнені</string>
+    <string name="setup_prefilled_from">За основу взято сетап від %1$s\nЗміни лише те, що крутив.</string>
+    <string name="setup_notes_hint">Як їхало, що хочеш спробувати наступного разу</string>
+    <string name="setup_delete_title">Видалити сетап?</string>
+    <string name="setup_delete_text">Цей запис зникне з історії велосипеда.</string>
+
+    <string name="section_general">Загальне</string>
+    <string name="section_fork">Вилка</string>
+    <string name="section_shock">Амортизатор</string>
+    <string name="section_tires">Колеса</string>
+    <string name="section_not_filled">Не заповнено</string>
+    <string name="clicks_hint">Клацання рахуються від повністю закритого положення</string>
+
+    <string name="field_location">Місцевість</string>
+    <string name="field_date">Дата</string>
+    <string name="field_weather">Погода</string>
+    <string name="field_temperature">Температура</string>
+    <string name="field_rider_weight">Вага райдера з екіпіровкою</string>
+    <string name="field_rider_weight_short">Вага з екіпом</string>
+    <string name="field_pressure">Тиск</string>
+    <string name="field_spring_rate">Пружина</string>
+    <string name="field_sag">Sag</string>
+    <string name="field_tokens">Токени</string>
+    <string name="field_rebound">Rebound</string>
+    <string name="field_lsc">LSC</string>
+    <string name="field_hsc">HSC</string>
+    <string name="field_front_pressure">Тиск переднього колеса</string>
+    <string name="field_rear_pressure">Тиск заднього колеса</string>
+    <string name="field_front_pressure_short">Перед</string>
+    <string name="field_rear_pressure_short">Зад</string>
+    <string name="field_front_tire">Покришка перед</string>
+    <string name="field_rear_tire">Покришка зад</string>
+    <string name="field_front_insert">Вставка перед</string>
+    <string name="field_rear_insert">Вставка зад</string>
+    <string name="field_tubeless">Безкамерка (tubeless)</string>
+    <string name="field_notes">Нотатки</string>
+    <string name="tire_model_hint">Напр. Maxxis Assegai 2.5 MaxxGrip</string>
+
+    <string name="summary_fork">Вилка: %1$s</string>
+    <string name="summary_shock">Аморт: %1$s</string>
+    <string name="summary_tires">Шини: %1$s</string>
+    <string name="summary_sag">sag %1$s</string>
+    <string name="summary_tire_pressures">%1$s / %2$s %3$s</string>
+
+    <string name="location_list_title">Місцевості</string>
+    <string name="location_list_empty">Ще немає місцевостей.\nДодай місця, де катаєш, щоб тримати окремий сетап під кожне.</string>
+    <string name="location_add">Місцевість</string>
+    <string name="location_add_inline">Нова місцевість…</string>
+    <string name="location_new_title">Нова місцевість</string>
+    <string name="location_edit_title">Редагування місцевості</string>
+    <string name="location_name">Назва</string>
+    <string name="location_name_hint">Напр. Буковель байк-парк</string>
+    <string name="location_terrain">Тип місцевості</string>
+    <string name="location_latitude">Широта</string>
+    <string name="location_longitude">Довгота</string>
+    <string name="location_use_current">Де я</string>
+    <string name="location_open_map">На мапі</string>
+    <string name="location_notes_hint">Ґрунт, корені, каміння, особливості трас</string>
+    <string name="location_fetch_failed">Не вдалося визначити місцезнаходження. Перевір, чи увімкнена геолокація.</string>
+    <string name="location_permission_denied">Без дозволу на геолокацію координати можна ввести вручну</string>
+    <string name="location_no_maps_app">Немає застосунку для мап</string>
+    <string name="location_delete_title">Видалити місцевість?</string>
+    <string name="location_delete_text">Сетапи, прив\'язані до цієї місцевості, залишаться, але стануть базовими.</string>
+
+    <string name="settings_title">Налаштування</string>
+    <string name="settings_units">Одиниці виміру</string>
+    <string name="settings_suspension_pressure">Тиск підвіски</string>
+    <string name="settings_tire_pressure">Тиск шин</string>
+    <string name="settings_weight">Вага</string>
+    <string name="settings_units_hint">Значення зберігаються в метричних одиницях і перераховуються при показі, тож одиниці можна міняти будь-коли.</string>
+    <string name="settings_about">Про застосунок</string>
+    <string name="settings_version">Версія %1$s</string>
+    <string name="settings_storage_hint">Дані зберігаються на телефоні та потрапляють у резервну копію Android.</string>
+
+    <plurals name="setup_count">
+        <item quantity="one">%d сетап</item>
+        <item quantity="few">%d сетапи</item>
+        <item quantity="many">%d сетапів</item>
+        <item quantity="other">%d сетапу</item>
+    </plurals>
+    <plurals name="token_count">
+        <item quantity="one">%d токен</item>
+        <item quantity="few">%d токени</item>
+        <item quantity="many">%d токенів</item>
+        <item quantity="other">%d токена</item>
+    </plurals>
+</resources>

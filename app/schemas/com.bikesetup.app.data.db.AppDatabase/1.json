@@ -1,0 +1,351 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "31e4383c623bdf4281e714e1f45673d5",
+    "entities": [
+      {
+        "tableName": "bikes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `wheelSize` TEXT NOT NULL, `forkModel` TEXT NOT NULL, `shockModel` TEXT NOT NULL, `shockType` TEXT NOT NULL, `notes` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `deletedAt` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wheelSize",
+            "columnName": "wheelSize",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "forkModel",
+            "columnName": "forkModel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shockModel",
+            "columnName": "shockModel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shockType",
+            "columnName": "shockType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "locations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `terrainType` TEXT NOT NULL, `latitude` REAL, `longitude` REAL, `notes` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `deletedAt` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "terrainType",
+            "columnName": "terrainType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "setups",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `bikeId` TEXT NOT NULL, `locationId` TEXT, `ridingDate` INTEGER NOT NULL, `riderWeightKg` REAL, `weather` TEXT, `temperatureC` REAL, `notes` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `deletedAt` INTEGER, `fork_pressureBar` REAL, `fork_sagPercent` REAL, `fork_tokens` INTEGER, `fork_rebound` INTEGER, `fork_lsc` INTEGER, `fork_hsc` INTEGER, `shock_pressureBar` REAL, `shock_springRateLbs` INTEGER, `shock_sagPercent` REAL, `shock_tokens` INTEGER, `shock_rebound` INTEGER, `shock_lsc` INTEGER, `shock_hsc` INTEGER, `tire_frontPressureBar` REAL, `tire_rearPressureBar` REAL, `tire_frontModel` TEXT NOT NULL, `tire_rearModel` TEXT NOT NULL, `tire_frontInsert` TEXT NOT NULL, `tire_rearInsert` TEXT NOT NULL, `tire_tubeless` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bikeId",
+            "columnName": "bikeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationId",
+            "columnName": "locationId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "ridingDate",
+            "columnName": "ridingDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "riderWeightKg",
+            "columnName": "riderWeightKg",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "weather",
+            "columnName": "weather",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "temperatureC",
+            "columnName": "temperatureC",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fork.pressureBar",
+            "columnName": "fork_pressureBar",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "fork.sagPercent",
+            "columnName": "fork_sagPercent",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "fork.tokens",
+            "columnName": "fork_tokens",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fork.rebound",
+            "columnName": "fork_rebound",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fork.lsc",
+            "columnName": "fork_lsc",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fork.hsc",
+            "columnName": "fork_hsc",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.pressureBar",
+            "columnName": "shock_pressureBar",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "shock.springRateLbs",
+            "columnName": "shock_springRateLbs",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.sagPercent",
+            "columnName": "shock_sagPercent",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "shock.tokens",
+            "columnName": "shock_tokens",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.rebound",
+            "columnName": "shock_rebound",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.lsc",
+            "columnName": "shock_lsc",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.hsc",
+            "columnName": "shock_hsc",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "tires.frontPressureBar",
+            "columnName": "tire_frontPressureBar",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "tires.rearPressureBar",
+            "columnName": "tire_rearPressureBar",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "tires.frontModel",
+            "columnName": "tire_frontModel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tires.rearModel",
+            "columnName": "tire_rearModel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tires.frontInsert",
+            "columnName": "tire_frontInsert",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tires.rearInsert",
+            "columnName": "tire_rearInsert",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tires.tubeless",
+            "columnName": "tire_tubeless",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_setups_bikeId",
+            "unique": false,
+            "columnNames": [
+              "bikeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_setups_bikeId` ON `${TABLE_NAME}` (`bikeId`)"
+          },
+          {
+            "name": "index_setups_locationId",
+            "unique": false,
+            "columnNames": [
+              "locationId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_setups_locationId` ON `${TABLE_NAME}` (`locationId`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '31e4383c623bdf4281e714e1f45673d5')"
+    ]
+  }
+}
