@@ -43,6 +43,22 @@ export const defaultSpec = (): SuspensionSpec => ({
   hscMax: null,
 });
 
+export interface CatalogRef {
+  modelId: string;
+  year: number;
+  damperId: string;
+  springId: string | null;
+  travelMm: number | null;
+}
+
+export interface ChartRow {
+  kgFrom: number;
+  kgTo: number;
+  psi: number | null;
+  lsr: number | null;
+  hsr: number | null;
+}
+
 export interface Bike extends Syncable {
   name: string;
   type: BikeType;
@@ -53,6 +69,10 @@ export interface Bike extends Syncable {
   notes: string;
   forkSpec: SuspensionSpec;
   shockSpec: SuspensionSpec;
+  forkCatalog?: CatalogRef | null;
+  shockCatalog?: CatalogRef | null;
+  forkChart?: ChartRow[];
+  shockChart?: ChartRow[];
 }
 
 export interface RidingLocation extends Syncable {

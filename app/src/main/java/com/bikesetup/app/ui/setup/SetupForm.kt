@@ -3,6 +3,7 @@ package com.bikesetup.app.ui.setup
 import com.bikesetup.app.data.advice.Adjuster
 import com.bikesetup.app.data.advice.CLICK_ADJUSTERS
 import com.bikesetup.app.data.advice.Recommendation
+import com.bikesetup.app.data.advice.SagRange
 import com.bikesetup.app.data.advice.StartingPoint
 import com.bikesetup.app.data.advice.SuspensionEnd
 import com.bikesetup.app.data.advice.hasEnd
@@ -110,7 +111,7 @@ data class SetupForm(
     fun withRecommendation(recommendation: Recommendation): SetupForm =
         recommendation.to?.let { withClicks(recommendation.end, recommendation.adjuster, it.toString()) } ?: this
 
-    fun withStartingPoint(bike: BikeEntity): Pair<SetupForm, Int> {
+    fun withStartingPoint(bike: BikeEntity, forkSag: SagRange? = null, shockSag: SagRange? = null): Pair<SetupForm, Int> {
         var form = this
         var filled = 0
         SuspensionEnd.entries.filter { bike.hasEnd(it) }.forEach { end ->
@@ -123,11 +124,11 @@ data class SetupForm(
             }
         }
         if (form.forkSag.isBlank()) {
-            form = form.copy(forkSag = formatDecimal(StartingPoint.forkSag(bike.type).target, 1))
+            form = form.copy(forkSag = formatDecimal((forkSag ?: StartingPoint.forkSag(bike.type)).target, 1))
             filled += 1
         }
         if (bike.hasEnd(SuspensionEnd.SHOCK) && form.shockSag.isBlank()) {
-            form = form.copy(shockSag = formatDecimal(StartingPoint.shockSag(bike.type).target, 1))
+            form = form.copy(shockSag = formatDecimal((shockSag ?: StartingPoint.shockSag(bike.type)).target, 1))
             filled += 1
         }
         return form to filled

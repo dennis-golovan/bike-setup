@@ -1,0 +1,51 @@
+{
+ "schema": 1,
+ "brand": "RockShox",
+ "note": "SRAM publishes no weight-based tables; starting pressure and rebound come from the TrailHead app or the chart on the fork leg.",
+ "models": [
+  {"id": "rockshox-pike-charger3", "brand": "RockShox", "family": "Pike", "kind": "FORK", "yearFrom": 2023, "yearTo": 2027,
+   "source": "https://www.sram.com/en/rockshox/learn/charger-3-setup", "sag": null, "springs": [],
+   "dampers": [
+    {"id": "CHARGER3_RC2", "label": "Charger 3 RC2 (Ultimate / Select+)", "adjusters": ["LSR", "LSC", "HSC"], "maxClicks": {}, "compressionStartRule": "MIDDLE"},
+    {"id": "CHARGER3_RC", "label": "Charger 3 RC (Select)", "adjusters": ["LSR", "LSC"], "maxClicks": {}, "compressionStartRule": "MIDDLE"}]},
+  {"id": "rockshox-lyrik-charger3", "brand": "RockShox", "family": "Lyrik", "kind": "FORK", "yearFrom": 2023, "yearTo": 2027,
+   "source": "https://www.sram.com/en/rockshox/learn/charger-3-setup", "sag": null, "springs": [],
+   "dampers": [
+    {"id": "CHARGER3_RC2", "label": "Charger 3 RC2 (Ultimate / Select+)", "adjusters": ["LSR", "LSC", "HSC"], "maxClicks": {}, "compressionStartRule": "MIDDLE"},
+    {"id": "CHARGER3_RC", "label": "Charger 3 RC (Select)", "adjusters": ["LSR", "LSC"], "maxClicks": {}, "compressionStartRule": "MIDDLE"}]},
+  {"id": "rockshox-zeb-charger3", "brand": "RockShox", "family": "ZEB", "kind": "FORK", "yearFrom": 2023, "yearTo": 2027,
+   "source": "https://www.sram.com/en/rockshox/learn/charger-3-setup", "sag": null, "springs": [],
+   "dampers": [
+    {"id": "CHARGER3_RC2", "label": "Charger 3 RC2 (Ultimate / Select+)", "adjusters": ["LSR", "LSC", "HSC"], "maxClicks": {}, "compressionStartRule": "MIDDLE"},
+    {"id": "CHARGER3_RC", "label": "Charger 3 RC (Select)", "adjusters": ["LSR", "LSC"], "maxClicks": {}, "compressionStartRule": "MIDDLE"}]},
+  {"id": "rockshox-pike-charger2", "brand": "RockShox", "family": "Pike", "kind": "FORK", "yearFrom": 2017, "yearTo": 2022,
+   "source": "https://www.sram.com/en/rockshox/learn/suspension-welcome-guide", "sag": null, "springs": [],
+   "dampers": [
+    {"id": "CHARGER2_RC2", "label": "Charger 2 / 2.1 RC2", "adjusters": ["LSR", "LSC", "HSC"], "maxClicks": {}, "compressionStartRule": "OPEN"},
+    {"id": "CHARGER_RC", "label": "Charger RC", "adjusters": ["LSR", "LSC"], "maxClicks": {}, "compressionStartRule": "OPEN"}]},
+  {"id": "rockshox-lyrik-charger2", "brand": "RockShox", "family": "Lyrik", "kind": "FORK", "yearFrom": 2016, "yearTo": 2022,
+   "source": "https://www.sram.com/en/rockshox/learn/suspension-welcome-guide", "sag": null, "springs": [],
+   "dampers": [
+    {"id": "CHARGER2_RC2", "label": "Charger 2 / 2.1 RC2", "adjusters": ["LSR", "LSC", "HSC"], "maxClicks": {}, "compressionStartRule": "OPEN"},
+    {"id": "CHARGER_RC", "label": "Charger RC", "adjusters": ["LSR", "LSC"], "maxClicks": {}, "compressionStartRule": "OPEN"}]},
+  {"id": "rockshox-zeb-charger2", "brand": "RockShox", "family": "ZEB", "kind": "FORK", "yearFrom": 2021, "yearTo": 2022,
+   "source": "https://www.sram.com/en/rockshox/learn/suspension-welcome-guide", "sag": null, "springs": [],
+   "dampers": [
+    {"id": "CHARGER2_RC2", "label": "Charger 2.1 RC2", "adjusters": ["LSR", "LSC", "HSC"], "maxClicks": {}, "compressionStartRule": "OPEN"},
+    {"id": "CHARGER_RC", "label": "Charger RC", "adjusters": ["LSR", "LSC"], "maxClicks": {}, "compressionStartRule": "OPEN"}]},
+  {"id": "rockshox-vivid-2023", "brand": "RockShox", "family": "Vivid", "kind": "SHOCK", "yearFrom": 2023, "yearTo": 2027,
+   "source": "https://sram.com/en/rockshox/learn/vivid-air-setup", "sag": {"min": 30, "max": 30}, "springs": [],
+   "dampers": [
+    {"id": "ULTIMATE", "label": "Vivid Ultimate", "adjusters": ["LSR", "LSC", "HSC"], "maxClicks": {}, "compressionStartRule": "MIDDLE"},
+    {"id": "SELECT", "label": "Vivid Select+", "adjusters": ["LSR"], "maxClicks": {}, "compressionStartRule": "MIDDLE"}]},
+  {"id": "rockshox-super-deluxe-2023", "brand": "RockShox", "family": "Super Deluxe", "kind": "SHOCK", "yearFrom": 2023, "yearTo": 2027,
+   "source": "https://www.sram.com/en/rockshox/learn/suspension-welcome-guide", "sag": null, "springs": [],
+   "dampers": [{"id": "STANDARD", "label": "Super Deluxe", "adjusters": ["LSR"], "maxClicks": {}, "compressionStartRule": "MIDDLE"}]},
+  {"id": "rockshox-super-deluxe-2017", "brand": "RockShox", "family": "Super Deluxe", "kind": "SHOCK", "yearFrom": 2017, "yearTo": 2022,
+   "source": "https://www.sram.com/en/rockshox/learn/suspension-welcome-guide", "sag": null, "springs": [],
+   "dampers": [{"id": "STANDARD", "label": "Super Deluxe", "adjusters": ["LSR"], "maxClicks": {}, "compressionStartRule": "OPEN"}]},
+  {"id": "rockshox-deluxe-2017", "brand": "RockShox", "family": "Deluxe", "kind": "SHOCK", "yearFrom": 2017, "yearTo": 2027,
+   "source": "https://www.sram.com/en/rockshox/learn/suspension-welcome-guide", "sag": null, "springs": [],
+   "dampers": [{"id": "STANDARD", "label": "Deluxe", "adjusters": ["LSR"], "maxClicks": {}, "compressionStartRule": "OPEN"}]}
+ ]
+}

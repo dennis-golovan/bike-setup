@@ -113,7 +113,7 @@ class SuspensionAdvisorTest {
         assertEquals("4", form.forkHsr)
         assertEquals("8", form.forkLsc)
         assertEquals("3", form.forkHsc)
-        assertEquals("22.5", form.forkSag)
+        assertEquals("17.5", form.forkSag)
         assertEquals("30", form.shockSag)
         assertEquals(9, filled)
     }

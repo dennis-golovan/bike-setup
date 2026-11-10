@@ -13,6 +13,7 @@ import {
   type Recommendation,
   type SuspensionEnd,
 } from './advice';
+import { catalogSag } from './catalog';
 import {
   EMPTY_SHOCK,
   type Bike,
@@ -283,11 +284,11 @@ export function withStartingPoint(form: SetupForm, bike: Bike): { form: SetupFor
     });
   });
   if (next.forkSag.trim() === '') {
-    next = { ...next, forkSag: formatDecimal(sagTarget(forkSag(bike.type)), 1) };
+    next = { ...next, forkSag: formatDecimal(sagTarget(catalogSag(bike, 'FORK') ?? forkSag(bike.type)), 1) };
     filled += 1;
   }
   if (hasEnd(bike, 'SHOCK') && next.shockSag.trim() === '') {
-    next = { ...next, shockSag: formatDecimal(sagTarget(shockSag(bike.type)), 1) };
+    next = { ...next, shockSag: formatDecimal(sagTarget(catalogSag(bike, 'SHOCK') ?? shockSag(bike.type)), 1) };
     filled += 1;
   }
   return { form: next, filled };

@@ -164,12 +164,7 @@ data class SagRange(val min: Int, val max: Int) {
 }
 
 object StartingPoint {
-    fun forkSag(type: BikeType): SagRange = when (type) {
-        BikeType.XC -> SagRange(15, 20)
-        BikeType.DOWNHILL -> SagRange(25, 30)
-        BikeType.DIRT_JUMP -> SagRange(10, 15)
-        else -> SagRange(20, 25)
-    }
+    fun forkSag(type: BikeType): SagRange = if (type == BikeType.DIRT_JUMP) SagRange(10, 15) else SagRange(15, 20)
 
     fun shockSag(type: BikeType): SagRange = when (type) {
         BikeType.XC, BikeType.DIRT_JUMP -> SagRange(20, 25)

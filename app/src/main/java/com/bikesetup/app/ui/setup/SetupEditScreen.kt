@@ -17,12 +17,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
@@ -34,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -67,6 +70,7 @@ import com.bikesetup.app.ui.components.DropdownField
 import com.bikesetup.app.ui.components.SectionCard
 import com.bikesetup.app.ui.components.StepperField
 import com.bikesetup.app.ui.components.TextInput
+import kotlinx.coroutines.launch
 
 private typealias FormUpdate = (SetupForm.() -> SetupForm) -> Unit
 
@@ -79,14 +83,43 @@ fun SetupEditScreen(onBack: () -> Unit, viewModel: SetupEditViewModel = hiltView
         if (state.isSaved) onBack()
     }
     val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarScope = rememberCoroutineScope()
     val filled = state.startingPointFilled
     val filledText = filled?.let {
         if (it > 0) stringResource(R.string.setup_starting_point_done, it) else stringResource(R.string.setup_starting_point_nothing)
     }
+    val manufacturer = state.manufacturerResult
+    val issueTexts = mapOf(
+        StartIssue.NEED_WEIGHT to stringResource(R.string.setup_manufacturer_need_weight),
+        StartIssue.NEED_SHOCK_PRESSURE to stringResource(R.string.setup_manufacturer_need_shock_pressure),
+        StartIssue.NEED_SPRING_RATE to stringResource(R.string.setup_manufacturer_need_spring),
+    )
+    val manufacturerDone = manufacturer?.let { stringResource(R.string.setup_manufacturer_done, it.changed) }
+    val manufacturerNothing = stringResource(R.string.setup_manufacturer_nothing)
+    val manufacturerText = manufacturer?.let { result ->
+        val head = when {
+            result.changed > 0 -> manufacturerDone
+            result.issues.isEmpty() -> manufacturerNothing
+            else -> null
+        }
+        (listOfNotNull(head) + StartIssue.entries.filter { it in result.issues }.mapNotNull(issueTexts::get)).joinToString(" ")
+    }
+    LaunchedEffect(manufacturer) {
+        if (manufacturerText != null) {
+            viewModel.manufacturerResultShown()
+            snackbarScope.launch {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                snackbarHostState.showSnackbar(manufacturerText, withDismissAction = true, duration = SnackbarDuration.Long)
+            }
+        }
+    }
     LaunchedEffect(filledText) {
         if (filledText != null) {
             viewModel.startingPointShown()
-            snackbarHostState.showSnackbar(filledText)
+            snackbarScope.launch {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                snackbarHostState.showSnackbar(filledText)
+            }
         }
     }
     val symptom = state.appliedSymptom
@@ -135,6 +168,11 @@ fun SetupEditScreen(onBack: () -> Unit, viewModel: SetupEditViewModel = hiltView
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.secondary,
                     )
+                }
+                if (state.manufacturerAvailable) {
+                    Button(onClick = viewModel::fillManufacturerStart, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.setup_manufacturer_start))
+                    }
                 }
                 OutlinedButton(onClick = viewModel::fillStartingPoint, modifier = Modifier.fillMaxWidth()) {
                     Icon(Icons.Filled.AutoFixHigh, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -231,7 +269,7 @@ private fun GeneralSection(state: SetupEditUiState, onUpdate: FormUpdate, onAddL
 @Composable
 private fun ForkSection(form: SetupForm, state: SetupEditUiState, onUpdate: FormUpdate) {
     val bike = state.bike
-    val sag = bike?.let { StartingPoint.forkSag(it.type) }
+    val sag = state.forkSag
     SectionCard(title = stringResource(R.string.section_fork), subtitle = stringResource(R.string.clicks_hint)) {
         FieldRow {
             DecimalField(
@@ -258,7 +296,7 @@ private fun ForkSection(form: SetupForm, state: SetupEditUiState, onUpdate: Form
 private fun ShockSection(form: SetupForm, state: SetupEditUiState, onUpdate: FormUpdate) {
     val bike = state.bike
     val isAir = state.shockType == ShockType.AIR
-    val sag = bike?.let { StartingPoint.shockSag(it.type) }
+    val sag = state.shockSag
     SectionCard(title = stringResource(R.string.section_shock), subtitle = stringResource(R.string.clicks_hint)) {
         FieldRow {
             if (isAir) {

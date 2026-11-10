@@ -743,3 +743,20 @@ button.card:active {
   min-height: 44px;
   margin-top: 8px;
 }
+
+.chart-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--outline-variant);
+  background: transparent;
+}
+
+.chart-row .text-action {
+  align-self: flex-end;
+}
+
+.form > .filled-action {
+  min-height: 44px;
+}

@@ -1,0 +1,521 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "e7fc9bc130f920866407319b39bde7cb",
+    "entities": [
+      {
+        "tableName": "bikes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `wheelSize` TEXT NOT NULL, `forkModel` TEXT NOT NULL, `shockModel` TEXT NOT NULL, `shockType` TEXT NOT NULL, `notes` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `deletedAt` INTEGER, `forkChart` TEXT NOT NULL DEFAULT '[]', `shockChart` TEXT NOT NULL DEFAULT '[]', `fork_spec_lsrEnabled` INTEGER NOT NULL DEFAULT 1, `fork_spec_lsrMax` INTEGER, `fork_spec_hsrEnabled` INTEGER NOT NULL DEFAULT 0, `fork_spec_hsrMax` INTEGER, `fork_spec_lscEnabled` INTEGER NOT NULL DEFAULT 1, `fork_spec_lscMax` INTEGER, `fork_spec_hscEnabled` INTEGER NOT NULL DEFAULT 1, `fork_spec_hscMax` INTEGER, `shock_spec_lsrEnabled` INTEGER NOT NULL DEFAULT 1, `shock_spec_lsrMax` INTEGER, `shock_spec_hsrEnabled` INTEGER NOT NULL DEFAULT 0, `shock_spec_hsrMax` INTEGER, `shock_spec_lscEnabled` INTEGER NOT NULL DEFAULT 1, `shock_spec_lscMax` INTEGER, `shock_spec_hscEnabled` INTEGER NOT NULL DEFAULT 1, `shock_spec_hscMax` INTEGER, `fork_cat_modelId` TEXT, `fork_cat_year` INTEGER, `fork_cat_damperId` TEXT, `fork_cat_springId` TEXT, `fork_cat_travelMm` INTEGER, `shock_cat_modelId` TEXT, `shock_cat_year` INTEGER, `shock_cat_damperId` TEXT, `shock_cat_springId` TEXT, `shock_cat_travelMm` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wheelSize",
+            "columnName": "wheelSize",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "forkModel",
+            "columnName": "forkModel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shockModel",
+            "columnName": "shockModel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shockType",
+            "columnName": "shockType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "forkChart",
+            "columnName": "forkChart",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'[]'"
+          },
+          {
+            "fieldPath": "shockChart",
+            "columnName": "shockChart",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'[]'"
+          },
+          {
+            "fieldPath": "forkSpec.lsrEnabled",
+            "columnName": "fork_spec_lsrEnabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "forkSpec.lsrMax",
+            "columnName": "fork_spec_lsrMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "forkSpec.hsrEnabled",
+            "columnName": "fork_spec_hsrEnabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "forkSpec.hsrMax",
+            "columnName": "fork_spec_hsrMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "forkSpec.lscEnabled",
+            "columnName": "fork_spec_lscEnabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "forkSpec.lscMax",
+            "columnName": "fork_spec_lscMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "forkSpec.hscEnabled",
+            "columnName": "fork_spec_hscEnabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "forkSpec.hscMax",
+            "columnName": "fork_spec_hscMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shockSpec.lsrEnabled",
+            "columnName": "shock_spec_lsrEnabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "shockSpec.lsrMax",
+            "columnName": "shock_spec_lsrMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shockSpec.hsrEnabled",
+            "columnName": "shock_spec_hsrEnabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "shockSpec.hsrMax",
+            "columnName": "shock_spec_hsrMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shockSpec.lscEnabled",
+            "columnName": "shock_spec_lscEnabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "shockSpec.lscMax",
+            "columnName": "shock_spec_lscMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shockSpec.hscEnabled",
+            "columnName": "shock_spec_hscEnabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "shockSpec.hscMax",
+            "columnName": "shock_spec_hscMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "forkCatalog.modelId",
+            "columnName": "fork_cat_modelId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "forkCatalog.year",
+            "columnName": "fork_cat_year",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "forkCatalog.damperId",
+            "columnName": "fork_cat_damperId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "forkCatalog.springId",
+            "columnName": "fork_cat_springId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "forkCatalog.travelMm",
+            "columnName": "fork_cat_travelMm",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shockCatalog.modelId",
+            "columnName": "shock_cat_modelId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "shockCatalog.year",
+            "columnName": "shock_cat_year",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shockCatalog.damperId",
+            "columnName": "shock_cat_damperId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "shockCatalog.springId",
+            "columnName": "shock_cat_springId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "shockCatalog.travelMm",
+            "columnName": "shock_cat_travelMm",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "locations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `terrainType` TEXT NOT NULL, `latitude` REAL, `longitude` REAL, `notes` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `deletedAt` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "terrainType",
+            "columnName": "terrainType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "setups",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `bikeId` TEXT NOT NULL, `locationId` TEXT, `ridingDate` INTEGER NOT NULL, `riderWeightKg` REAL, `weather` TEXT, `temperatureC` REAL, `notes` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `deletedAt` INTEGER, `fork_pressureBar` REAL, `fork_sagPercent` REAL, `fork_tokens` INTEGER, `fork_rebound` INTEGER, `fork_hsr` INTEGER, `fork_lsc` INTEGER, `fork_hsc` INTEGER, `shock_pressureBar` REAL, `shock_springRateLbs` INTEGER, `shock_sagPercent` REAL, `shock_tokens` INTEGER, `shock_rebound` INTEGER, `shock_hsr` INTEGER, `shock_lsc` INTEGER, `shock_hsc` INTEGER, `tire_frontPressureBar` REAL, `tire_rearPressureBar` REAL, `tire_frontModel` TEXT NOT NULL, `tire_rearModel` TEXT NOT NULL, `tire_frontInsert` TEXT NOT NULL, `tire_rearInsert` TEXT NOT NULL, `tire_tubeless` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bikeId",
+            "columnName": "bikeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationId",
+            "columnName": "locationId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "ridingDate",
+            "columnName": "ridingDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "riderWeightKg",
+            "columnName": "riderWeightKg",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "weather",
+            "columnName": "weather",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "temperatureC",
+            "columnName": "temperatureC",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deletedAt",
+            "columnName": "deletedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fork.pressureBar",
+            "columnName": "fork_pressureBar",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "fork.sagPercent",
+            "columnName": "fork_sagPercent",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "fork.tokens",
+            "columnName": "fork_tokens",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fork.rebound",
+            "columnName": "fork_rebound",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fork.hsr",
+            "columnName": "fork_hsr",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fork.lsc",
+            "columnName": "fork_lsc",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fork.hsc",
+            "columnName": "fork_hsc",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.pressureBar",
+            "columnName": "shock_pressureBar",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "shock.springRateLbs",
+            "columnName": "shock_springRateLbs",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.sagPercent",
+            "columnName": "shock_sagPercent",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "shock.tokens",
+            "columnName": "shock_tokens",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.rebound",
+            "columnName": "shock_rebound",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.hsr",
+            "columnName": "shock_hsr",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.lsc",
+            "columnName": "shock_lsc",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "shock.hsc",
+            "columnName": "shock_hsc",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "tires.frontPressureBar",
+            "columnName": "tire_frontPressureBar",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "tires.rearPressureBar",
+            "columnName": "tire_rearPressureBar",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "tires.frontModel",
+            "columnName": "tire_frontModel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tires.rearModel",
+            "columnName": "tire_rearModel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tires.frontInsert",
+            "columnName": "tire_frontInsert",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tires.rearInsert",
+            "columnName": "tire_rearInsert",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tires.tubeless",
+            "columnName": "tire_tubeless",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_setups_bikeId",
+            "unique": false,
+            "columnNames": [
+              "bikeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_setups_bikeId` ON `${TABLE_NAME}` (`bikeId`)"
+          },
+          {
+            "name": "index_setups_locationId",
+            "unique": false,
+            "columnNames": [
+              "locationId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_setups_locationId` ON `${TABLE_NAME}` (`locationId`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e7fc9bc130f920866407319b39bde7cb')"
+    ]
+  }
+}

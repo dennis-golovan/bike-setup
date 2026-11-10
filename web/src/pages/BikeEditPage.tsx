@@ -8,12 +8,16 @@ import {
   type Bike,
   type BikeType,
   type ShockType,
+  type CatalogRef,
+  type ChartRow,
   type SuspensionSpec,
   type WheelSize,
   defaultSpec,
 } from '../data/model';
+import type { CatalogDamper } from '../data/catalog';
 import { CLICK_ADJUSTERS } from '../data/advice';
-import { newId, nowMillis, parseCount } from '../data/units';
+import { newId, nowMillis, parseCount, parseDecimal } from '../data/units';
+import { CatalogPicker, ChartEditor, type ChartRowForm } from '../ui/CatalogPicker';
 import { NumberField, Screen, Section, SelectField, SwitchField, TextAction, TextField, useBack } from '../ui/components';
 import { adjusterFullLabel } from '../ui/adviceText';
 import { useI18n } from '../ui/i18n';
@@ -35,7 +39,39 @@ interface BikeForm {
   notes: string;
   forkSpec: SpecForm;
   shockSpec: SpecForm;
+  forkCatalog: CatalogRef | null;
+  shockCatalog: CatalogRef | null;
+  forkChart: ChartRowForm[];
+  shockChart: ChartRowForm[];
 }
+
+const chartToForm = (rows: ChartRow[] | undefined): ChartRowForm[] =>
+  (rows ?? []).map((r) => ({
+    kgFrom: String(r.kgFrom),
+    kgTo: String(r.kgTo),
+    psi: r.psi === null ? '' : String(r.psi),
+    lsr: r.lsr === null ? '' : String(r.lsr),
+    hsr: r.hsr === null ? '' : String(r.hsr),
+  }));
+
+const formToChart = (rows: ChartRowForm[]): ChartRow[] =>
+  rows.flatMap((r) => {
+    const kgFrom = parseDecimal(r.kgFrom);
+    const kgTo = parseDecimal(r.kgTo);
+    return kgFrom === null || kgTo === null
+      ? []
+      : [{ kgFrom, kgTo, psi: parseDecimal(r.psi), lsr: parseCount(r.lsr), hsr: parseCount(r.hsr) }];
+  });
+
+const withDamper = (spec: SpecForm, damper: CatalogDamper | null): SpecForm =>
+  damper === null
+    ? spec
+    : (Object.fromEntries(
+        (Object.keys(spec) as (keyof SpecForm)[]).map((key) => {
+          const known = damper.maxClicks[key];
+          return [key, { enabled: damper.adjusters.includes(key), max: known === undefined ? spec[key].max : String(known) }];
+        }),
+      ) as SpecForm);
 
 const specToForm = (spec: SuspensionSpec): SpecForm => ({
   LSR: { enabled: spec.lsrEnabled, max: spec.lsrMax === null ? '' : String(spec.lsrMax) },
@@ -73,6 +109,10 @@ const EMPTY_FORM: BikeForm = {
   notes: '',
   forkSpec: specToForm(defaultSpec()),
   shockSpec: specToForm(defaultSpec()),
+  forkCatalog: null,
+  shockCatalog: null,
+  forkChart: [],
+  shockChart: [],
 };
 
 const toForm = (bike: Bike): BikeForm => ({
@@ -85,6 +125,10 @@ const toForm = (bike: Bike): BikeForm => ({
   notes: bike.notes,
   forkSpec: specToForm(bike.forkSpec),
   shockSpec: specToForm(bike.shockSpec),
+  forkCatalog: bike.forkCatalog ?? null,
+  shockCatalog: bike.shockCatalog ?? null,
+  forkChart: chartToForm(bike.forkChart),
+  shockChart: chartToForm(bike.shockChart),
 });
 
 export function BikeEditPage() {
@@ -125,6 +169,10 @@ export function BikeEditPage() {
       notes: form.notes.trim(),
       forkSpec: formToSpec(form.forkSpec),
       shockSpec: form.shockType === 'NONE' ? defaultSpec() : formToSpec(form.shockSpec),
+      forkCatalog: form.forkCatalog,
+      shockCatalog: form.shockType === 'NONE' ? null : form.shockCatalog,
+      forkChart: formToChart(form.forkChart),
+      shockChart: form.shockType === 'NONE' ? [] : formToChart(form.shockChart),
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
       deletedAt: null,
@@ -158,11 +206,23 @@ export function BikeEditPage() {
             placeholder={t.bikeForkModelHint}
             onChange={(forkModel) => update({ forkModel })}
           />
+          <Section title={t.catalogFork}>
+            <CatalogPicker
+              end="FORK"
+              value={form.forkCatalog}
+              onChange={(forkCatalog, damper) =>
+                setForm((current) => ({ ...current, forkCatalog, forkSpec: withDamper(current.forkSpec, damper) }))
+              }
+            />
+          </Section>
           <AdjustersSection
             title={t.bikeForkAdjusters}
             spec={form.forkSpec}
             onChange={(forkSpec) => update({ forkSpec })}
           />
+          <Section title={t.chartTitle}>
+            <ChartEditor rows={form.forkChart} showHsr={form.forkSpec.HSR.enabled} onChange={(forkChart) => update({ forkChart })} />
+          </Section>
           <SelectField
             label={t.bikeShockType}
             value={form.shockType}
@@ -178,11 +238,29 @@ export function BikeEditPage() {
             />
           )}
           {form.shockType !== 'NONE' && (
-            <AdjustersSection
-              title={t.bikeShockAdjusters}
-              spec={form.shockSpec}
-              onChange={(shockSpec) => update({ shockSpec })}
-            />
+            <>
+              <Section title={t.catalogShock}>
+                <CatalogPicker
+                  end="SHOCK"
+                  value={form.shockCatalog}
+                  onChange={(shockCatalog, damper) =>
+                    setForm((current) => ({ ...current, shockCatalog, shockSpec: withDamper(current.shockSpec, damper) }))
+                  }
+                />
+              </Section>
+              <AdjustersSection
+                title={t.bikeShockAdjusters}
+                spec={form.shockSpec}
+                onChange={(shockSpec) => update({ shockSpec })}
+              />
+              <Section title={t.chartTitle}>
+                <ChartEditor
+                  rows={form.shockChart}
+                  showHsr={form.shockSpec.HSR.enabled}
+                  onChange={(shockChart) => update({ shockChart })}
+                />
+              </Section>
+            </>
           )}
           <TextField label={t.fieldNotes} value={form.notes} multiline onChange={(notes) => update({ notes })} />
         </div>

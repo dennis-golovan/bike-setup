@@ -100,7 +100,7 @@ describe('suspension advisor', () => {
 describe('setup form with adjuster limits', () => {
   it('fills only empty fields with the middle of the range and target sag', () => {
     const { form, filled } = withStartingPoint({ ...emptySetupForm(), forkHsc: '3' }, bike());
-    expect(form).toMatchObject({ forkRebound: '9', forkHsr: '4', forkLsc: '8', forkHsc: '3', forkSag: '22.5', shockSag: '30' });
+    expect(form).toMatchObject({ forkRebound: '9', forkHsr: '4', forkLsc: '8', forkHsc: '3', forkSag: '17.5', shockSag: '30' });
     expect(filled).toBe(9);
   });
 

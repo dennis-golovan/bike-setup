@@ -127,12 +127,7 @@ export interface SagRange {
 export const sagTarget = (range: SagRange): number => (range.min + range.max) / 2;
 
 export function forkSag(type: BikeType): SagRange {
-  const ranges: Partial<Record<BikeType, SagRange>> = {
-    XC: { min: 15, max: 20 },
-    DOWNHILL: { min: 25, max: 30 },
-    DIRT_JUMP: { min: 10, max: 15 },
-  };
-  return ranges[type] ?? { min: 20, max: 25 };
+  return type === 'DIRT_JUMP' ? { min: 10, max: 15 } : { min: 15, max: 20 };
 }
 
 export function shockSag(type: BikeType): SagRange {

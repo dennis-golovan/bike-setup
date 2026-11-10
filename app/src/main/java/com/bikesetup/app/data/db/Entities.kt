@@ -10,6 +10,7 @@ import com.bikesetup.app.data.model.ShockType
 import com.bikesetup.app.data.model.TerrainType
 import com.bikesetup.app.data.model.Weather
 import com.bikesetup.app.data.model.WheelSize
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 @Entity(tableName = "bikes")
@@ -27,6 +28,27 @@ data class BikeEntity(
     val deletedAt: Long? = null,
     @Embedded(prefix = "fork_spec_") val forkSpec: SuspensionSpec = SuspensionSpec(),
     @Embedded(prefix = "shock_spec_") val shockSpec: SuspensionSpec = SuspensionSpec(),
+    @Embedded(prefix = "fork_cat_") val forkCatalog: CatalogRefEntity? = null,
+    @Embedded(prefix = "shock_cat_") val shockCatalog: CatalogRefEntity? = null,
+    @ColumnInfo(defaultValue = "[]") val forkChart: List<ChartRow> = emptyList(),
+    @ColumnInfo(defaultValue = "[]") val shockChart: List<ChartRow> = emptyList(),
+)
+
+data class CatalogRefEntity(
+    val modelId: String,
+    val year: Int,
+    val damperId: String,
+    val springId: String?,
+    val travelMm: Int?,
+)
+
+@Serializable
+data class ChartRow(
+    val kgFrom: Double,
+    val kgTo: Double,
+    val psi: Double?,
+    val lsr: Int?,
+    val hsr: Int?,
 )
 
 data class SuspensionSpec(

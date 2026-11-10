@@ -228,4 +228,31 @@
         <item quantity="one">Remove %1$d volume token</item>
         <item quantity="other">Remove %1$d volume tokens</item>
     </plurals>
+    <string name="catalog_travel_value" translatable="false">%1$d mm</string>
+    <string name="catalog_fork">Fork from the catalogue</string>
+    <string name="catalog_shock">Shock from the catalogue</string>
+    <string name="catalog_brand">Brand</string>
+    <string name="catalog_model">Model</string>
+    <string name="catalog_year">Year</string>
+    <string name="catalog_damper">Damper</string>
+    <string name="catalog_spring">Spring</string>
+    <string name="catalog_travel">Travel</string>
+    <string name="catalog_none">Not selected</string>
+    <string name="catalog_source">Data source</string>
+    <string name="catalog_hint">Data from the manufacturer\'s official manuals. Adjusters and known click limits are filled in automatically.</string>
+    <string name="catalog_no_tables">This brand publishes no weight tables. Take pressure and rebound from the sticker on the fork leg or from the brand\'s app and enter them in your own table below.</string>
+    <string name="catalog_factory_tokens">Factory tokens: %1$d, maximum %2$d</string>
+    <string name="chart_title">Your own table (sticker / brand app)</string>
+    <string name="chart_hint">Copy the rows from your suspension: weight → pressure and rebound. Your own table takes priority over the catalogue.</string>
+    <string name="chart_kg_from">Weight from, kg</string>
+    <string name="chart_kg_to">to, kg</string>
+    <string name="chart_psi">Pressure, psi</string>
+    <string name="chart_add_row">Add row</string>
+    <string name="chart_remove_row">Remove row</string>
+    <string name="setup_manufacturer_start">Start from the manufacturer table</string>
+    <string name="setup_manufacturer_done">Filled from the manufacturer table: %1$d. It is only a starting point: fine-tune from here and note how it rode.</string>
+    <string name="setup_manufacturer_nothing">The table has no new values for these fields.</string>
+    <string name="setup_manufacturer_need_weight">Enter the rider weight with gear: manufacturer tables are based on it.</string>
+    <string name="setup_manufacturer_need_shock_pressure">Set the shock pressure by sag first: the damping settings depend on it.</string>
+    <string name="setup_manufacturer_need_spring">Enter the spring rate: the damping settings depend on it.</string>
 </resources>

@@ -201,4 +201,30 @@
         <item quantity="one">%1$d Token entfernen</item>
         <item quantity="other">%1$d Tokens entfernen</item>
     </plurals>
+    <string name="catalog_fork">Gabel aus dem Katalog</string>
+    <string name="catalog_shock">Dämpfer aus dem Katalog</string>
+    <string name="catalog_brand">Hersteller</string>
+    <string name="catalog_model">Modell</string>
+    <string name="catalog_year">Jahr</string>
+    <string name="catalog_damper">Dämpfer</string>
+    <string name="catalog_spring">Feder</string>
+    <string name="catalog_travel">Federweg</string>
+    <string name="catalog_none">Nicht gewählt</string>
+    <string name="catalog_source">Datenquelle</string>
+    <string name="catalog_hint">Daten aus den offiziellen Handbüchern des Herstellers. Einsteller und bekannte Klick-Grenzen werden automatisch übernommen.</string>
+    <string name="catalog_no_tables">Dieser Hersteller veröffentlicht keine Gewichtstabellen. Übernimm Druck und Zugstufe vom Aufkleber am Casting oder aus der Hersteller-App in deine eigene Tabelle unten.</string>
+    <string name="catalog_factory_tokens">Werkseitige Tokens: %1$d, maximal %2$d</string>
+    <string name="chart_title">Eigene Tabelle (Aufkleber / Hersteller-App)</string>
+    <string name="chart_hint">Übertrage die Zeilen deiner Federung: Gewicht → Druck und Zugstufe. Deine Tabelle hat Vorrang vor dem Katalog.</string>
+    <string name="chart_kg_from">Gewicht ab, kg</string>
+    <string name="chart_kg_to">bis, kg</string>
+    <string name="chart_psi">Druck, psi</string>
+    <string name="chart_add_row">Zeile hinzufügen</string>
+    <string name="chart_remove_row">Zeile entfernen</string>
+    <string name="setup_manufacturer_start">Start nach Herstellertabelle</string>
+    <string name="setup_manufacturer_done">Aus der Herstellertabelle übernommen: %1$d. Das ist nur ein Startpunkt: stimme von hier aus ab und notiere, wie es lief.</string>
+    <string name="setup_manufacturer_nothing">Die Tabelle hat keine neuen Werte für diese Felder.</string>
+    <string name="setup_manufacturer_need_weight">Gib das Fahrergewicht mit Ausrüstung an: die Herstellertabellen basieren darauf.</string>
+    <string name="setup_manufacturer_need_shock_pressure">Stelle zuerst den Dämpferdruck über den Sag ein: die Dämpfung richtet sich danach.</string>
+    <string name="setup_manufacturer_need_spring">Gib die Federhärte an: die Dämpfung richtet sich danach.</string>
 </resources>

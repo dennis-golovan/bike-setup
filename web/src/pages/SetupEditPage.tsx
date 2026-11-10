@@ -17,6 +17,7 @@ import {
   SYMPTOM_KEYS,
   canApply,
   forkSag,
+  hasEnd,
   isAvailable,
   maxClicks,
   recommend,
@@ -26,6 +27,7 @@ import {
   type SagRange,
   type SuspensionEnd,
 } from '../data/advice';
+import { catalogSag, hasManufacturerData, manufacturerStart, type StartIssue } from '../data/catalog';
 import {
   asFreshCopy,
   clicksText,
@@ -122,6 +124,27 @@ export function SetupEditPage() {
     };
     void load();
   }, [params.setupId, params.bikeId, copyFromId, symptomParam]);
+  const fillManufacturerStart = () => {
+    const bike = loaded?.bike;
+    if (bike) {
+      const fork = hasManufacturerData(bike, 'FORK') ? manufacturerStart(form, bike, settings, 'FORK') : null;
+      const afterFork = fork?.form ?? form;
+      const shock = hasEnd(bike, 'SHOCK') && hasManufacturerData(bike, 'SHOCK') ? manufacturerStart(afterFork, bike, settings, 'SHOCK') : null;
+      const issues = [...(fork?.issues ?? []), ...(shock?.issues ?? [])];
+      const changed = (fork?.changed ?? 0) + (shock?.changed ?? 0);
+      const issueText: Record<StartIssue, string> = {
+        NEED_WEIGHT: t.setupManufacturerNeedWeight,
+        NEED_SHOCK_PRESSURE: t.setupManufacturerNeedShockPressure,
+        NEED_SPRING_RATE: t.setupManufacturerNeedSpring,
+      };
+      setForm(shock?.form ?? afterFork);
+      showToast(
+        [changed > 0 ? t.setupManufacturerDone(changed) : issues.length === 0 ? t.setupManufacturerNothing : '', ...[...new Set(issues)].map((i) => issueText[i])]
+          .filter((x) => x !== '')
+          .join(' '),
+      );
+    }
+  };
   const fillStartingPoint = () => {
     const bike = loaded?.bike;
     if (bike) {
@@ -177,6 +200,11 @@ export function SetupEditPage() {
       {loaded && (
         <div className="form">
           {loaded.prefilledFrom && <p className="hint accent">{t.setupPrefilledFrom(formatDate(loaded.prefilledFrom))}</p>}
+          {loaded.bike && (hasManufacturerData(loaded.bike, 'FORK') || hasManufacturerData(loaded.bike, 'SHOCK')) && (
+            <button type="button" className="filled-action" onClick={fillManufacturerStart}>
+              {t.setupManufacturerStart}
+            </button>
+          )}
           <button type="button" className="outlined-action" onClick={fillStartingPoint}>
             <Icon name="magic" size={20} />
             {t.setupStartingPoint}
@@ -229,7 +257,7 @@ export function SetupEditPage() {
               />
               <NumberField label={t.fieldSag} value={form.forkSag} suffix="%" onChange={(forkSag) => update({ forkSag })} />
             </Row>
-            {loaded.bike && <SagHint range={forkSag(loaded.bike.type)} />}
+            {loaded.bike && <SagHint range={catalogSag(loaded.bike, 'FORK') ?? forkSag(loaded.bike.type)} />}
             {loaded.bike && <AdjusterFields end="FORK" form={form} bike={loaded.bike} setForm={setForm} />}
           </Section>
           {shockType !== 'NONE' && (
@@ -253,7 +281,7 @@ export function SetupEditPage() {
                 )}
                 <NumberField label={t.fieldSag} value={form.shockSag} suffix="%" onChange={(shockSag) => update({ shockSag })} />
               </Row>
-              {loaded.bike && <SagHint range={shockSag(loaded.bike.type)} />}
+              {loaded.bike && <SagHint range={catalogSag(loaded.bike, 'SHOCK') ?? shockSag(loaded.bike.type)} />}
               {loaded.bike && <AdjusterFields end="SHOCK" form={form} bike={loaded.bike} setForm={setForm} />}
             </Section>
           )}

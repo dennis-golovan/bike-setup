@@ -29,6 +29,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bikesetup.app.R
 import com.bikesetup.app.data.advice.CLICK_ADJUSTERS
+import com.bikesetup.app.data.advice.SuspensionEnd
+import com.bikesetup.app.data.catalog.Catalog
+import com.bikesetup.app.data.catalog.CatalogDamper
+import com.bikesetup.app.data.db.CatalogRefEntity
 import com.bikesetup.app.data.model.BikeType
 import com.bikesetup.app.data.model.ShockType
 import com.bikesetup.app.data.model.WheelSize
@@ -64,6 +68,8 @@ fun BikeEditScreen(onBack: () -> Unit, viewModel: BikeEditViewModel = hiltViewMo
             BikeFormContent(
                 form = state.form,
                 onUpdate = viewModel::update,
+                catalog = viewModel.catalog,
+                onSelectCatalog = viewModel::selectCatalog,
                 modifier = Modifier.padding(padding).consumeWindowInsets(padding),
             )
         }
@@ -71,7 +77,13 @@ fun BikeEditScreen(onBack: () -> Unit, viewModel: BikeEditViewModel = hiltViewMo
 }
 
 @Composable
-private fun BikeFormContent(form: BikeForm, onUpdate: (BikeForm.() -> BikeForm) -> Unit, modifier: Modifier) {
+private fun BikeFormContent(
+    form: BikeForm,
+    onUpdate: (BikeForm.() -> BikeForm) -> Unit,
+    catalog: Catalog,
+    onSelectCatalog: (SuspensionEnd, CatalogRefEntity?, CatalogDamper?) -> Unit,
+    modifier: Modifier,
+) {
     Column(
         modifier = modifier.fillMaxSize().imePadding().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -104,11 +116,19 @@ private fun BikeFormContent(form: BikeForm, onUpdate: (BikeForm.() -> BikeForm) 
             label = stringResource(R.string.bike_fork_model),
             placeholder = stringResource(R.string.bike_fork_model_hint),
         )
+        CatalogPickerSection(
+            title = stringResource(R.string.catalog_fork),
+            end = SuspensionEnd.FORK,
+            value = form.forkCatalog,
+            catalog = catalog,
+            onSelect = { ref, damper -> onSelectCatalog(SuspensionEnd.FORK, ref, damper) },
+        )
         AdjustersSection(
             title = stringResource(R.string.bike_fork_adjusters),
             spec = form.forkSpec,
             onChange = { spec -> onUpdate { copy(forkSpec = spec) } },
         )
+        ChartEditorSection(form.forkChart, form.forkSpec.hsr.enabled) { rows -> onUpdate { copy(forkChart = rows) } }
         DropdownField(
             label = stringResource(R.string.bike_shock_type),
             options = ShockType.entries,
@@ -124,11 +144,19 @@ private fun BikeFormContent(form: BikeForm, onUpdate: (BikeForm.() -> BikeForm) 
                 label = stringResource(R.string.bike_shock_model),
                 placeholder = stringResource(R.string.bike_shock_model_hint),
             )
+            CatalogPickerSection(
+                title = stringResource(R.string.catalog_shock),
+                end = SuspensionEnd.SHOCK,
+                value = form.shockCatalog,
+                catalog = catalog,
+                onSelect = { ref, damper -> onSelectCatalog(SuspensionEnd.SHOCK, ref, damper) },
+            )
             AdjustersSection(
                 title = stringResource(R.string.bike_shock_adjusters),
                 spec = form.shockSpec,
                 onChange = { spec -> onUpdate { copy(shockSpec = spec) } },
             )
+            ChartEditorSection(form.shockChart, form.shockSpec.hsr.enabled) { rows -> onUpdate { copy(shockChart = rows) } }
         }
         TextInput(
             value = form.notes,

@@ -5,8 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.bikesetup.app.data.advice.Recommendation
+import com.bikesetup.app.data.advice.SagRange
+import com.bikesetup.app.data.advice.StartingPoint
 import com.bikesetup.app.data.advice.SuspensionAdvisor
+import com.bikesetup.app.data.advice.SuspensionEnd
 import com.bikesetup.app.data.advice.Symptom
+import com.bikesetup.app.data.advice.hasEnd
+import com.bikesetup.app.data.catalog.CatalogRepository
 import com.bikesetup.app.data.db.BikeEntity
 import com.bikesetup.app.data.db.LocationEntity
 import com.bikesetup.app.data.db.SetupEntity
@@ -41,6 +46,10 @@ data class SetupEditUiState(
     val appliedSymptom: Symptom? = null,
     val appliedRecommendation: Recommendation? = null,
     val startingPointFilled: Int? = null,
+    val manufacturerResult: ManufacturerSummary? = null,
+    val manufacturerAvailable: Boolean = false,
+    val forkSag: SagRange? = null,
+    val shockSag: SagRange? = null,
     val isSaving: Boolean = false,
     val isSaved: Boolean = false,
 ) {
@@ -49,6 +58,8 @@ data class SetupEditUiState(
         get() = !isLoading && !isSaving && !form.hasErrors && bike?.let { !form.exceedsLimits(it) } != false
 }
 
+data class ManufacturerSummary(val changed: Int, val issues: Set<StartIssue>)
+
 @HiltViewModel
 class SetupEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -56,6 +67,7 @@ class SetupEditViewModel @Inject constructor(
     private val bikeRepository: BikeRepository,
     private val locationRepository: LocationRepository,
     private val settingsRepository: SettingsRepository,
+    private val catalogRepository: CatalogRepository,
 ) : ViewModel() {
     private val route = savedStateHandle.toRoute<SetupEditRoute>()
     private var existing: SetupEntity? = null
@@ -89,9 +101,15 @@ class SetupEditViewModel @Inject constructor(
         }
         val baseForm = current?.toForm(settings) ?: template?.toForm(settings)?.asFreshCopy() ?: SetupForm()
         val form = recommendation?.let(baseForm::withRecommendation) ?: baseForm
+        val catalog = catalogRepository.catalog
+        val manufacturerAvailable = bike != null &&
+            SuspensionEnd.entries.any { end -> bike.hasEnd(end) && catalog.resolve(bike, end).hasData }
         _state.update {
             it.copy(
                 isLoading = false,
+                manufacturerAvailable = manufacturerAvailable,
+                forkSag = bike?.let { b -> catalog.sag(b, SuspensionEnd.FORK)?.let { s -> SagRange(s.min, s.max) } ?: StartingPoint.forkSag(b.type) },
+                shockSag = bike?.let { b -> catalog.sag(b, SuspensionEnd.SHOCK)?.let { s -> SagRange(s.min, s.max) } ?: StartingPoint.shockSag(b.type) },
                 bike = bike,
                 settings = settings,
                 form = form,
@@ -110,10 +128,36 @@ class SetupEditViewModel @Inject constructor(
         val bike = _state.value.bike
         if (bike != null) {
             _state.update {
-                val (form, filled) = it.form.withStartingPoint(bike)
+                val (form, filled) = it.form.withStartingPoint(bike, it.forkSag, it.shockSag)
                 it.copy(form = form, startingPointFilled = filled)
             }
         }
+    }
+
+    fun fillManufacturerStart() {
+        val bike = _state.value.bike
+        if (bike != null) {
+            val catalog = catalogRepository.catalog
+            _state.update { state ->
+                var form = state.form
+                var changed = 0
+                val issues = mutableSetOf<StartIssue>()
+                SuspensionEnd.entries.forEach { end ->
+                    val source = catalog.resolve(bike, end)
+                    if (bike.hasEnd(end) && source.hasData) {
+                        val result = ManufacturerStart.apply(form, bike, state.settings, end, source)
+                        form = result.form
+                        changed += result.changed
+                        issues += result.issues
+                    }
+                }
+                state.copy(form = form, manufacturerResult = ManufacturerSummary(changed, issues))
+            }
+        }
+    }
+
+    fun manufacturerResultShown() {
+        _state.update { it.copy(manufacturerResult = null) }
     }
 
     fun startingPointShown() {

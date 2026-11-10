@@ -4,7 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.bikesetup.app.data.advice.SuspensionEnd
+import com.bikesetup.app.data.catalog.Catalog
+import com.bikesetup.app.data.catalog.CatalogDamper
+import com.bikesetup.app.data.catalog.CatalogRepository
 import com.bikesetup.app.data.db.BikeEntity
+import com.bikesetup.app.data.db.CatalogRefEntity
 import com.bikesetup.app.data.db.SuspensionSpec
 import com.bikesetup.app.data.model.BikeType
 import com.bikesetup.app.data.model.ShockType
@@ -31,6 +36,10 @@ data class BikeForm(
     val notes: String = "",
     val forkSpec: SpecForm = SpecForm(),
     val shockSpec: SpecForm = SpecForm(),
+    val forkCatalog: CatalogRefEntity? = null,
+    val shockCatalog: CatalogRefEntity? = null,
+    val forkChart: List<ChartRowForm> = emptyList(),
+    val shockChart: List<ChartRowForm> = emptyList(),
 ) {
     val isValid: Boolean get() = name.isNotBlank() && forkSpec.isValid && (shockType == ShockType.NONE || shockSpec.isValid)
 }
@@ -49,7 +58,9 @@ data class BikeEditUiState(
 class BikeEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val bikeRepository: BikeRepository,
+    catalogRepository: CatalogRepository,
 ) : ViewModel() {
+    val catalog: Catalog by lazy { catalogRepository.catalog }
     private val bikeId = savedStateHandle.toRoute<BikeEditRoute>().bikeId
     private var existing: BikeEntity? = null
     private val _state = MutableStateFlow(BikeEditUiState(isNew = bikeId == null, isLoading = bikeId != null))
@@ -67,6 +78,15 @@ class BikeEditViewModel @Inject constructor(
 
     fun update(transform: BikeForm.() -> BikeForm) {
         _state.update { it.copy(form = it.form.transform()) }
+    }
+
+    fun selectCatalog(end: SuspensionEnd, ref: CatalogRefEntity?, damper: CatalogDamper?) {
+        update {
+            when (end) {
+                SuspensionEnd.FORK -> copy(forkCatalog = ref, forkSpec = damper?.let(forkSpec::withDamper) ?: forkSpec)
+                SuspensionEnd.SHOCK -> copy(shockCatalog = ref, shockSpec = damper?.let(shockSpec::withDamper) ?: shockSpec)
+            }
+        }
     }
 
     fun save() {
@@ -99,6 +119,10 @@ private fun BikeEntity.toForm() = BikeForm(
     notes = notes,
     forkSpec = forkSpec.toForm(),
     shockSpec = shockSpec.toForm(),
+    forkCatalog = forkCatalog,
+    shockCatalog = shockCatalog,
+    forkChart = forkChart.toChartForm(),
+    shockChart = shockChart.toChartForm(),
 )
 
 private fun BikeForm.toEntity(id: String, createdAt: Long, updatedAt: Long) = BikeEntity(
@@ -114,4 +138,8 @@ private fun BikeForm.toEntity(id: String, createdAt: Long, updatedAt: Long) = Bi
     updatedAt = updatedAt,
     forkSpec = forkSpec.toSpec(),
     shockSpec = if (shockType == ShockType.NONE) SuspensionSpec() else shockSpec.toSpec(),
+    forkCatalog = forkCatalog,
+    shockCatalog = shockCatalog.takeIf { shockType != ShockType.NONE },
+    forkChart = forkChart.toChart(),
+    shockChart = if (shockType == ShockType.NONE) emptyList() else shockChart.toChart(),
 )

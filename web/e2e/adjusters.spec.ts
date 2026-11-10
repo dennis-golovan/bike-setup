@@ -24,9 +24,9 @@ test('describes the damper, fills starting values and applies a tip', async ({ p
   await expect(page.getByText(/Заповнено: \d+/)).toBeVisible();
   await expect(page.getByLabel('HSR', { exact: true }).first()).toHaveValue('4');
   await expect(page.getByLabel('LSR', { exact: true }).first()).toHaveValue('9');
-  await expect(page.getByLabel('Sag', { exact: true }).first()).toHaveValue('22.5');
-  await expect(page.getByText('Рекомендовано для цього типу байка: 20–25%')).toBeVisible();
-  await page.getByText('Рекомендовано для цього типу байка: 20–25%').scrollIntoViewIfNeeded();
+  await expect(page.getByLabel('Sag', { exact: true }).first()).toHaveValue('17.5');
+  await expect(page.getByText('Рекомендовано для цього типу байка: 15–20%')).toBeVisible();
+  await page.getByText('Рекомендовано для цього типу байка: 15–20%').scrollIntoViewIfNeeded();
   await shot(page, '12-starting-values');
 
   await page.getByRole('button', { name: 'Збільшити: HSR' }).first().click();

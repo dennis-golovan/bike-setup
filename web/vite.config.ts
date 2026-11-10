@@ -5,6 +5,9 @@ import pkg from './package.json' with { type: 'json' };
 
 export default defineConfig({
   base: './',
+  server: {
+    fs: { allow: ['..'] },
+  },
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
