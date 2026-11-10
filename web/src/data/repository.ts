@@ -12,10 +12,11 @@ import {
   type Syncable,
   type UserSettings,
 } from './model';
+import { normalizeBike, normalizeSetup } from './normalize';
 import { nowMillis } from './units';
 
 export const EXPORT_FORMAT = 'bike-setup';
-export const EXPORT_VERSION = 1;
+export const EXPORT_VERSION = 2;
 
 export interface ExportData {
   format: typeof EXPORT_FORMAT;
@@ -180,9 +181,9 @@ export class Repository {
     const data = parseExport(raw);
     return this.db.transaction('rw', this.db.bikes, this.db.locations, this.db.setups, async () => {
       const results = [
-        await mergeInto(this.db.bikes, data.bikes),
+        await mergeInto(this.db.bikes, data.bikes.map(normalizeBike)),
         await mergeInto(this.db.locations, data.locations),
-        await mergeInto(this.db.setups, data.setups),
+        await mergeInto(this.db.setups, data.setups.map(normalizeSetup)),
       ];
       return results.reduce((sum, r) => ({ added: sum.added + r.added, updated: sum.updated + r.updated }), {
         added: 0,

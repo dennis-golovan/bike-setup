@@ -2,8 +2,11 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { repo } from '../data';
+import { ALL_ADJUSTERS, maxClicks, setupValue, specOf, type SuspensionEnd } from '../data/advice';
+import type { Bike, Setup } from '../data/model';
+import { adjusterShortLabel, clicksValue } from '../ui/adviceText';
 import { ConfirmDelete, IconButton, Screen, Section, ValueRow, useBack } from '../ui/components';
-import { useI18n } from '../ui/i18n';
+import { useI18n, type Dictionary } from '../ui/i18n';
 import { percentValue, pressureValue, springRateValue, temperatureValue, weightValue } from '../ui/format';
 
 type Row = [string, string] | null;
@@ -57,7 +60,6 @@ export function SetupDetailPage() {
         const { settings } = data;
         const suspension = settings.suspensionPressureUnit;
         const isAir = bike.shockType === 'AIR';
-        const count = (v: number) => String(v);
         return (
           <>
             <DetailSection
@@ -75,10 +77,7 @@ export function SetupDetailPage() {
               rows={[
                 row(t.fieldPressure, setup.fork.pressureBar, (bar) => pressureValue(bar, suspension)),
                 row(t.fieldSag, setup.fork.sagPercent, percentValue),
-                row(t.fieldTokens, setup.fork.tokens, count),
-                row(t.fieldRebound, setup.fork.rebound, count),
-                row(t.fieldLsc, setup.fork.lsc, count),
-                row(t.fieldHsc, setup.fork.hsc, count),
+                ...adjusterRows('FORK', setup, bike, t),
               ]}
             />
             {bike.shockType !== 'NONE' && (
@@ -88,10 +87,7 @@ export function SetupDetailPage() {
                   isAir ? row(t.fieldPressure, setup.shock.pressureBar, (bar) => pressureValue(bar, suspension)) : null,
                   isAir ? null : row(t.fieldSpringRate, setup.shock.springRateLbs, springRateValue),
                   row(t.fieldSag, setup.shock.sagPercent, percentValue),
-                  isAir ? row(t.fieldTokens, setup.shock.tokens, count) : null,
-                  row(t.fieldRebound, setup.shock.rebound, count),
-                  row(t.fieldLsc, setup.shock.lsc, count),
-                  row(t.fieldHsc, setup.shock.hsc, count),
+                  ...adjusterRows('SHOCK', setup, bike, t),
                 ]}
               />
             )}
@@ -124,6 +120,7 @@ export function SetupDetailPage() {
       actions={
         item && (
           <>
+            <IconButton icon="tune" label={t.adviceTitle} onClick={() => navigate(`/setup/${item.setup.id}/advice`)} />
             <IconButton
               icon="copy"
               label={t.setupCopy}
@@ -146,4 +143,12 @@ export function SetupDetailPage() {
       )}
     </Screen>
   );
+}
+
+function adjusterRows(end: SuspensionEnd, setup: Setup, bike: Bike, t: Dictionary): Row[] {
+  const spec = specOf(bike, end);
+  return ALL_ADJUSTERS.map((adjuster) => {
+    const value = setupValue(setup, end, adjuster);
+    return value === null ? null : [adjusterShortLabel(adjuster, spec, t), clicksValue(value, maxClicks(spec, adjuster))];
+  });
 }

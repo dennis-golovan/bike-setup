@@ -142,16 +142,17 @@ interface NumberFieldProps {
   suffix?: string;
   allowNegative?: boolean;
   integer?: boolean;
+  disabled?: boolean;
 }
 
-export function NumberField({ label, value, onChange, suffix, allowNegative, integer }: NumberFieldProps) {
+export function NumberField({ label, value, onChange, suffix, allowNegative, integer, disabled }: NumberFieldProps) {
   const { t } = useI18n();
   const id = useId();
   const valid = integer ? isCountValid(value) : isDecimalValid(value, allowNegative);
   const toggleSign = () => onChange(value.trim().startsWith('-') ? value.trim().slice(1) : `-${value.trim()}`);
   return (
-    <Field label={label} htmlFor={id} error={!valid}>
-      <div className="input-shell">
+    <Field label={label} htmlFor={id} error={!disabled && !valid}>
+      <div className={disabled ? 'input-shell disabled' : 'input-shell'}>
         {allowNegative && (
           <button type="button" className="sign-button" aria-label={t.toggleSign} onClick={toggleSign}>
             ±
@@ -163,6 +164,7 @@ export function NumberField({ label, value, onChange, suffix, allowNegative, int
           inputMode={integer ? 'numeric' : 'decimal'}
           autoComplete="off"
           value={value}
+          disabled={disabled}
           aria-invalid={!valid}
           onChange={(e) => onChange(e.target.value)}
         />
@@ -172,14 +174,30 @@ export function NumberField({ label, value, onChange, suffix, allowNegative, int
   );
 }
 
-export function StepperField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+export function StepperField({
+  label,
+  value,
+  onChange,
+  max = null,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  max?: number | null;
+}) {
   const { t } = useI18n();
   const id = useId();
-  const current = parseCount(value) ?? 0;
+  const current = parseCount(value);
+  const overMax = max !== null && current !== null && current > max;
+  const increase = () => onChange(String(max === null ? (current ?? 0) + 1 : Math.min(max, (current ?? 0) + 1)));
   return (
-    <Field label={label} htmlFor={id} error={!isCountValid(value)}>
+    <Field label={label} htmlFor={id} error={!isCountValid(value) || overMax}>
       <div className="input-shell stepper">
-        <button type="button" aria-label={`${t.decrease}: ${label}`} onClick={() => onChange(String(Math.max(0, current - 1)))}>
+        <button
+          type="button"
+          aria-label={`${t.decrease}: ${label}`}
+          onClick={() => onChange(String(Math.max(0, (current ?? 0) - 1)))}
+        >
           <Icon name="remove" />
         </button>
         <input
@@ -189,12 +207,19 @@ export function StepperField({ label, value, onChange }: { label: string; value:
           autoComplete="off"
           placeholder={t.missing}
           value={value}
+          aria-invalid={overMax}
           onChange={(e) => onChange(e.target.value)}
         />
-        <button type="button" aria-label={`${t.increase}: ${label}`} onClick={() => onChange(String(current + 1))}>
+        {max !== null && <span className="suffix stepper-max">/ {max}</span>}
+        <button type="button" aria-label={`${t.increase}: ${label}`} onClick={increase}>
           <Icon name="add" />
         </button>
       </div>
+      {max !== null && max > 0 && current !== null && (
+        <div className={overMax ? 'meter error' : 'meter'} role="presentation">
+          <span style={{ width: `${Math.min(100, (current / max) * 100)}%` }} />
+        </div>
+      )}
     </Field>
   );
 }

@@ -161,4 +161,71 @@
         <item quantity="one">%d token</item>
         <item quantity="other">%d tokens</item>
     </plurals>
+    <string name="field_lsr" translatable="false">LSR</string>
+    <string name="field_hsr" translatable="false">HSR</string>
+    <string name="value_of_max" translatable="false">%1$d / %2$d</string>
+    <string name="value_of_max_suffix" translatable="false">/ %1$d</string>
+    <string name="advice_change" translatable="false">%1$s → %2$s</string>
+    <string name="adjuster_lsr_full">Rebound (LSR)</string>
+    <string name="adjuster_hsr_full">High-speed rebound (HSR)</string>
+    <string name="adjuster_lsc_full">Low-speed compression (LSC)</string>
+    <string name="adjuster_hsc_full">High-speed compression (HSC)</string>
+    <string name="bike_fork_adjusters">Fork adjusters</string>
+    <string name="bike_shock_adjusters">Shock adjusters</string>
+    <string name="bike_adjusters_hint">Turn on the adjusters your damper has and enter how many clicks each one has from fully closed to fully open. The maximum is optional.</string>
+    <string name="field_max_clicks">Max</string>
+    <string name="setup_starting_point">Fill in starting values</string>
+    <string name="setup_starting_point_done">Filled in: %1$d. Clicks are set to the middle of the range, sag to the recommended target.</string>
+    <string name="setup_starting_point_nothing">Nothing to fill in: the fields already have values or the bike has no click maximums.</string>
+    <string name="setup_sag_target">Recommended for this bike type: %1$d–%2$d%%</string>
+    <string name="advice_title">What feels wrong?</string>
+    <string name="advice_intro">Pick what you feel on the trail. The tip is based on this setup. Change one thing at a time and note how it rode.</string>
+    <string name="advice_what_to_do">What to try</string>
+    <string name="advice_why">Why</string>
+    <string name="advice_apply">Create a setup with this change</string>
+    <string name="advice_no_adjuster">Your suspension has no adjuster for this. Check sag and air pressure first.</string>
+    <string name="advice_at_limit">This adjuster is already at its limit. Check sag and air pressure, or the damper may need a service.</string>
+    <string name="advice_unknown_value">This setup has no value for %1$s. Fill it in to apply the change automatically.</string>
+    <string name="advice_change_of_max">%1$s → %2$s of %3$d</string>
+    <string name="advice_note">Trying: %1$s. %2$s</string>
+    <string name="symptom_fork_kicks_back">Fork kicks back after landings and big hits</string>
+    <string name="symptom_fork_kicks_back_why">The fork returns too fast after deep compression. More rebound damping calms it down.</string>
+    <string name="symptom_fork_packs_down">Fork sinks into its travel on repeated hits</string>
+    <string name="symptom_fork_packs_down_why">Rebound is too slow: the fork cannot recover before the next hit. Less rebound damping lets it come back faster.</string>
+    <string name="symptom_fork_harsh">Harsh on roots and rocks, hands get tired</string>
+    <string name="symptom_fork_harsh_why">Fast small hits meet too much compression damping. Opening the high-speed compression lets the fork absorb them.</string>
+    <string name="symptom_fork_bottoms_out">Fork bottoms out on big hits</string>
+    <string name="symptom_fork_bottoms_out_why">The end of travel is not progressive enough. A volume token makes it firmer without changing sag; more compression damping also helps.</string>
+    <string name="symptom_fork_unused_travel">Fork never uses its full travel</string>
+    <string name="symptom_fork_unused_travel_why">The end of travel is too progressive or compression is too firm. Removing a token or opening compression frees up the travel.</string>
+    <string name="symptom_fork_dives">Fork dives under braking and on steep sections</string>
+    <string name="symptom_fork_dives_why">Slow weight shifts push the fork deep. More low-speed compression damping keeps it higher in its travel.</string>
+    <string name="symptom_shock_kicks_back">Rear kicks up after jumps and drops</string>
+    <string name="symptom_shock_kicks_back_why">The shock returns too fast after deep compression. More rebound damping keeps the rear wheel planted.</string>
+    <string name="symptom_shock_packs_down">Rear sinks into its travel on repeated hits</string>
+    <string name="symptom_shock_packs_down_why">Rebound is too slow for repeated hits. Less rebound damping lets the shock recover between them.</string>
+    <string name="symptom_shock_harsh">Rear feels harsh on small bumps</string>
+    <string name="symptom_shock_harsh_why">Compression damping is too firm for fast small hits. Open the high-speed compression.</string>
+    <string name="symptom_shock_bottoms_out">Shock bottoms out hard</string>
+    <string name="symptom_shock_bottoms_out_why">Not enough support at the end of travel. A volume token (air shocks) or more compression damping adds it.</string>
+    <string name="symptom_shock_unused_travel">Shock never uses its full travel</string>
+    <string name="symptom_shock_unused_travel_why">The end of travel is too progressive or compression is too firm. Removing a token or opening compression frees up the travel.</string>
+    <string name="symptom_shock_bobs">Rear bobs while pedalling</string>
+    <string name="symptom_shock_bobs_why">Pedalling forces are slow movements. More low-speed compression damping calms them; a climb switch, if you have one, does the same on climbs.</string>
+    <plurals name="advice_close">
+        <item quantity="one">%1$s: close by %2$d click</item>
+        <item quantity="other">%1$s: close by %2$d clicks</item>
+    </plurals>
+    <plurals name="advice_open">
+        <item quantity="one">%1$s: open by %2$d click</item>
+        <item quantity="other">%1$s: open by %2$d clicks</item>
+    </plurals>
+    <plurals name="advice_add_token">
+        <item quantity="one">Add %1$d volume token</item>
+        <item quantity="other">Add %1$d volume tokens</item>
+    </plurals>
+    <plurals name="advice_remove_token">
+        <item quantity="one">Remove %1$d volume token</item>
+        <item quantity="other">Remove %1$d volume tokens</item>
+    </plurals>
 </resources>

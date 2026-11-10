@@ -4,21 +4,27 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,12 +43,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bikesetup.app.R
+import com.bikesetup.app.data.advice.Adjuster
+import com.bikesetup.app.data.advice.SagRange
+import com.bikesetup.app.data.advice.StartingPoint
+import com.bikesetup.app.data.advice.SuspensionEnd
+import com.bikesetup.app.data.advice.isAvailable
+import com.bikesetup.app.data.advice.maxClicks
+import com.bikesetup.app.data.advice.spec
+import com.bikesetup.app.data.db.BikeEntity
 import com.bikesetup.app.data.db.LocationEntity
+import com.bikesetup.app.data.db.SuspensionSpec
 import com.bikesetup.app.data.model.ShockType
 import com.bikesetup.app.data.model.TerrainType
 import com.bikesetup.app.data.model.Weather
 import com.bikesetup.app.ui.common.formatDate
 import com.bikesetup.app.ui.common.labelRes
+import com.bikesetup.app.ui.common.recommendationAction
+import com.bikesetup.app.ui.common.shortLabelRes
 import com.bikesetup.app.ui.components.BackButton
 import com.bikesetup.app.ui.components.DateField
 import com.bikesetup.app.ui.components.DecimalField
@@ -60,7 +78,34 @@ fun SetupEditScreen(onBack: () -> Unit, viewModel: SetupEditViewModel = hiltView
     LaunchedEffect(state.isSaved) {
         if (state.isSaved) onBack()
     }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val filled = state.startingPointFilled
+    val filledText = filled?.let {
+        if (it > 0) stringResource(R.string.setup_starting_point_done, it) else stringResource(R.string.setup_starting_point_nothing)
+    }
+    LaunchedEffect(filledText) {
+        if (filledText != null) {
+            viewModel.startingPointShown()
+            snackbarHostState.showSnackbar(filledText)
+        }
+    }
+    val symptom = state.appliedSymptom
+    val recommendation = state.appliedRecommendation
+    val bike = state.bike
+    val adviceNote = if (symptom != null && recommendation != null && bike != null) {
+        stringResource(
+            R.string.advice_note,
+            stringResource(symptom.labelRes()),
+            recommendationAction(recommendation, bike.spec(recommendation.end)),
+        )
+    } else {
+        null
+    }
+    LaunchedEffect(adviceNote) {
+        adviceNote?.let(viewModel::setNotesIfEmpty)
+    }
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(if (state.isNew) R.string.setup_new_title else R.string.setup_edit_title)) },
@@ -90,6 +135,10 @@ fun SetupEditScreen(onBack: () -> Unit, viewModel: SetupEditViewModel = hiltView
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.secondary,
                     )
+                }
+                OutlinedButton(onClick = viewModel::fillStartingPoint, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Filled.AutoFixHigh, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Text(stringResource(R.string.setup_starting_point), modifier = Modifier.padding(start = 8.dp))
                 }
                 GeneralSection(state, viewModel::update, onAddLocation = { showAddLocation = true })
                 ForkSection(state.form, state, viewModel::update)
@@ -181,6 +230,8 @@ private fun GeneralSection(state: SetupEditUiState, onUpdate: FormUpdate, onAddL
 
 @Composable
 private fun ForkSection(form: SetupForm, state: SetupEditUiState, onUpdate: FormUpdate) {
+    val bike = state.bike
+    val sag = bike?.let { StartingPoint.forkSag(it.type) }
     SectionCard(title = stringResource(R.string.section_fork), subtitle = stringResource(R.string.clicks_hint)) {
         FieldRow {
             DecimalField(
@@ -198,20 +249,16 @@ private fun ForkSection(form: SetupForm, state: SetupEditUiState, onUpdate: Form
                 modifier = Modifier.weight(1f),
             )
         }
-        FieldRow {
-            StepperField(form.forkTokens, { v -> onUpdate { copy(forkTokens = v) } }, stringResource(R.string.field_tokens), Modifier.weight(1f))
-            StepperField(form.forkRebound, { v -> onUpdate { copy(forkRebound = v) } }, stringResource(R.string.field_rebound), Modifier.weight(1f))
-        }
-        FieldRow {
-            StepperField(form.forkLsc, { v -> onUpdate { copy(forkLsc = v) } }, stringResource(R.string.field_lsc), Modifier.weight(1f))
-            StepperField(form.forkHsc, { v -> onUpdate { copy(forkHsc = v) } }, stringResource(R.string.field_hsc), Modifier.weight(1f))
-        }
+        sag?.let { SagHint(it) }
+        AdjusterFields(SuspensionEnd.FORK, form, bike, onUpdate)
     }
 }
 
 @Composable
 private fun ShockSection(form: SetupForm, state: SetupEditUiState, onUpdate: FormUpdate) {
+    val bike = state.bike
     val isAir = state.shockType == ShockType.AIR
+    val sag = bike?.let { StartingPoint.shockSag(it.type) }
     SectionCard(title = stringResource(R.string.section_shock), subtitle = stringResource(R.string.clicks_hint)) {
         FieldRow {
             if (isAir) {
@@ -240,15 +287,39 @@ private fun ShockSection(form: SetupForm, state: SetupEditUiState, onUpdate: For
                 modifier = Modifier.weight(1f),
             )
         }
+        sag?.let { SagHint(it) }
+        AdjusterFields(SuspensionEnd.SHOCK, form, bike, onUpdate)
+    }
+}
+
+@Composable
+private fun SagHint(range: SagRange) {
+    Text(
+        stringResource(R.string.setup_sag_target, range.min, range.max),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+@Composable
+private fun AdjusterFields(end: SuspensionEnd, form: SetupForm, bike: BikeEntity?, onUpdate: FormUpdate) {
+    val spec = bike?.spec(end) ?: SuspensionSpec()
+    val adjusters = listOf(Adjuster.TOKENS, Adjuster.LSR, Adjuster.HSR, Adjuster.LSC, Adjuster.HSC)
+        .filter { bike?.isAvailable(end, it) ?: (it != Adjuster.HSR) }
+    adjusters.chunked(2).forEach { pair ->
         FieldRow {
-            if (isAir) {
-                StepperField(form.shockTokens, { v -> onUpdate { copy(shockTokens = v) } }, stringResource(R.string.field_tokens), Modifier.weight(1f))
+            pair.forEach { adjuster ->
+                StepperField(
+                    value = form.clicks(end, adjuster),
+                    onValueChange = { v -> onUpdate { withClicks(end, adjuster, v) } },
+                    label = stringResource(adjuster.shortLabelRes(spec)),
+                    max = spec.maxClicks(adjuster),
+                    modifier = Modifier.weight(1f),
+                )
             }
-            StepperField(form.shockRebound, { v -> onUpdate { copy(shockRebound = v) } }, stringResource(R.string.field_rebound), Modifier.weight(1f))
-        }
-        FieldRow {
-            StepperField(form.shockLsc, { v -> onUpdate { copy(shockLsc = v) } }, stringResource(R.string.field_lsc), Modifier.weight(1f))
-            StepperField(form.shockHsc, { v -> onUpdate { copy(shockHsc = v) } }, stringResource(R.string.field_hsc), Modifier.weight(1f))
+            if (pair.size == 1) {
+                Spacer(Modifier.weight(1f))
+            }
         }
     }
 }

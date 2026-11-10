@@ -2,9 +2,11 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { repo } from '../data';
-import type { Bike, Setup, UserSettings } from '../data/model';
+import { CLICK_ADJUSTERS, isEnabled, maxClicks } from '../data/advice';
+import type { Bike, Setup, SuspensionSpec, UserSettings } from '../data/model';
+import { adjusterShortLabel } from '../ui/adviceText';
 import { ConfirmDelete, EmptyState, Fab, IconButton, Screen, Section, ValueRow, useBack } from '../ui/components';
-import { useI18n } from '../ui/i18n';
+import { useI18n, type Dictionary } from '../ui/i18n';
 import { Icon } from '../ui/Icon';
 import { SetupCard } from '../ui/SetupCard';
 
@@ -89,8 +91,10 @@ function BikeInfo({ bike }: { bike: Bike }) {
       <ValueRow label={t.bikeType} value={t.bikeTypes[bike.type]} />
       <ValueRow label={t.bikeWheelSize} value={t.wheelSizes[bike.wheelSize]} />
       {bike.forkModel && <ValueRow label={t.bikeForkModel} value={bike.forkModel} />}
+      <ValueRow label={t.bikeForkAdjusters} value={adjustersSummary(bike.forkSpec, t)} />
       <ValueRow label={t.bikeShockType} value={t.shockTypes[bike.shockType]} />
       {bike.shockType !== 'NONE' && bike.shockModel && <ValueRow label={t.bikeShockModel} value={bike.shockModel} />}
+      {bike.shockType !== 'NONE' && <ValueRow label={t.bikeShockAdjusters} value={adjustersSummary(bike.shockSpec, t)} />}
       {bike.notes && <p className="notes">{bike.notes}</p>}
     </Section>
   );
@@ -128,4 +132,13 @@ function SetupGroupSection({ group, bike, settings }: { group: SetupGroup; bike:
         ))}
     </div>
   );
+}
+
+function adjustersSummary(spec: SuspensionSpec, t: Dictionary): string {
+  const parts = CLICK_ADJUSTERS.filter((a) => isEnabled(spec, a)).map((a) => {
+    const max = maxClicks(spec, a);
+    const label = adjusterShortLabel(a, spec, t);
+    return max === null ? label : `${label} ${max}`;
+  });
+  return parts.length > 0 ? parts.join(' · ') : t.missing;
 }

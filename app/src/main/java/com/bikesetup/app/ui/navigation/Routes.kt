@@ -19,7 +19,11 @@ data class SetupEditRoute(
     val bikeId: String,
     val setupId: String? = null,
     val copyFromId: String? = null,
+    val symptom: String? = null,
 )
+
+@Serializable
+data class AdviceRoute(val setupId: String)
 
 @Serializable
 data object LocationListRoute

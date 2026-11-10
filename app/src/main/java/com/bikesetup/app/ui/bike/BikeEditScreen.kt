@@ -2,33 +2,42 @@ package com.bikesetup.app.ui.bike
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bikesetup.app.R
+import com.bikesetup.app.data.advice.CLICK_ADJUSTERS
 import com.bikesetup.app.data.model.BikeType
 import com.bikesetup.app.data.model.ShockType
 import com.bikesetup.app.data.model.WheelSize
+import com.bikesetup.app.ui.common.fullLabelRes
 import com.bikesetup.app.ui.common.labelRes
 import com.bikesetup.app.ui.components.BackButton
+import com.bikesetup.app.ui.components.DecimalField
 import com.bikesetup.app.ui.components.DropdownField
+import com.bikesetup.app.ui.components.SectionCard
 import com.bikesetup.app.ui.components.TextInput
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,6 +104,11 @@ private fun BikeFormContent(form: BikeForm, onUpdate: (BikeForm.() -> BikeForm) 
             label = stringResource(R.string.bike_fork_model),
             placeholder = stringResource(R.string.bike_fork_model_hint),
         )
+        AdjustersSection(
+            title = stringResource(R.string.bike_fork_adjusters),
+            spec = form.forkSpec,
+            onChange = { spec -> onUpdate { copy(forkSpec = spec) } },
+        )
         DropdownField(
             label = stringResource(R.string.bike_shock_type),
             options = ShockType.entries,
@@ -110,6 +124,11 @@ private fun BikeFormContent(form: BikeForm, onUpdate: (BikeForm.() -> BikeForm) 
                 label = stringResource(R.string.bike_shock_model),
                 placeholder = stringResource(R.string.bike_shock_model_hint),
             )
+            AdjustersSection(
+                title = stringResource(R.string.bike_shock_adjusters),
+                spec = form.shockSpec,
+                onChange = { spec -> onUpdate { copy(shockSpec = spec) } },
+            )
         }
         TextInput(
             value = form.notes,
@@ -118,5 +137,33 @@ private fun BikeFormContent(form: BikeForm, onUpdate: (BikeForm.() -> BikeForm) 
             singleLine = false,
             minLines = 3,
         )
+    }
+}
+
+@Composable
+private fun AdjustersSection(title: String, spec: SpecForm, onChange: (SpecForm) -> Unit) {
+    SectionCard(title = title, subtitle = stringResource(R.string.bike_adjusters_hint)) {
+        CLICK_ADJUSTERS.forEach { adjuster ->
+            val item = spec.get(adjuster)
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Switch(
+                    checked = item.enabled,
+                    onCheckedChange = { enabled -> onChange(spec.with(adjuster, item.copy(enabled = enabled))) },
+                )
+                Text(
+                    stringResource(adjuster.fullLabelRes()),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                DecimalField(
+                    value = item.max,
+                    onValueChange = { max -> onChange(spec.with(adjuster, item.copy(max = max))) },
+                    label = stringResource(R.string.field_max_clicks),
+                    integerOnly = true,
+                    enabled = item.enabled,
+                    modifier = Modifier.width(112.dp),
+                )
+            }
+        }
     }
 }

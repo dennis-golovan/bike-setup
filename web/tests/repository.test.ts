@@ -1,7 +1,8 @@
 import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { BikeSetupDb } from '../src/data/db';
-import type { Bike, RidingLocation, Setup } from '../src/data/model';
+import Dexie from 'dexie';
+import { defaultSpec, type Bike, type RidingLocation, type Setup } from '../src/data/model';
 import { ImportFormatError, Repository } from '../src/data/repository';
 import { emptySetupForm, formToSetup } from '../src/data/setupForm';
 
@@ -14,6 +15,8 @@ const bike = (id: string, name: string): Bike => ({
   shockModel: '',
   shockType: 'AIR',
   notes: '',
+  forkSpec: defaultSpec(),
+  shockSpec: defaultSpec(),
   createdAt: 1,
   updatedAt: 1,
   deletedAt: null,
@@ -103,5 +106,34 @@ describe('repository', () => {
   it('rejects files that are not backups', async () => {
     await expect(repo.importData({ hello: 'world' })).rejects.toBeInstanceOf(ImportFormatError);
     await expect(repo.importData(null)).rejects.toBeInstanceOf(ImportFormatError);
+  });
+});
+
+describe('upgrades from 1.1', () => {
+  it('fills suspension specs and HSR for data stored by version 1 of the database', async () => {
+    const name = `legacy-${counter}`;
+    const legacy = new Dexie(name);
+    legacy.version(1).stores({ bikes: 'id', locations: 'id', setups: 'id, bikeId, locationId', settings: 'key' });
+    const { forkSpec: _f, shockSpec: _s, ...oldBike } = bike('old', 'Old');
+    await legacy.table('bikes').put(oldBike);
+    const oldSetup = setup('os', 'old', '2026-10-01', null);
+    await legacy.table('setups').put({ ...oldSetup, fork: { ...oldSetup.fork, hsr: undefined } });
+    legacy.close();
+    const upgraded = new Repository(new BikeSetupDb(name));
+    const stored = await upgraded.getBike('old');
+    expect(stored?.forkSpec).toEqual(defaultSpec());
+    expect(stored?.shockSpec.hsrEnabled).toBe(false);
+    expect((await upgraded.latestSetupForBike('old'))?.fork.hsr).toBeNull();
+  });
+
+  it('imports a 1.1 backup without suspension specs', async () => {
+    const backup = await repo.exportData();
+    const legacyBackup = {
+      ...backup,
+      version: 1,
+      bikes: backup.bikes.map(({ forkSpec: _f, shockSpec: _s, ...rest }) => ({ ...rest, id: `${rest.id}-x` })),
+    };
+    await repo.importData(legacyBackup);
+    expect((await repo.getBike('b1-x'))?.forkSpec).toEqual(defaultSpec());
   });
 });

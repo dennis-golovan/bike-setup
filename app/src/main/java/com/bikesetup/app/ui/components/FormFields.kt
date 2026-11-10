@@ -19,6 +19,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
@@ -85,13 +86,15 @@ fun DecimalField(
     suffix: String? = null,
     allowNegative: Boolean = false,
     integerOnly: Boolean = false,
+    enabled: Boolean = true,
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         suffix = suffix?.let { { Text(it) } },
-        isError = if (integerOnly) !isCountValid(value) else !isDecimalValid(value, allowNegative),
+        isError = enabled && if (integerOnly) !isCountValid(value) else !isDecimalValid(value, allowNegative),
+        enabled = enabled,
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = if (integerOnly) KeyboardType.Number else KeyboardType.Decimal,
@@ -107,13 +110,15 @@ fun StepperField(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
+    max: Int? = null,
 ) {
-    val current = parseCount(value) ?: 0
+    val current = parseCount(value)
+    val isOverMax = max != null && current != null && current > max
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             label,
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = if (isOverMax) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(start = 4.dp),
@@ -128,22 +133,35 @@ fun StepperField(
                     modifier = Modifier.fillMaxWidth(),
                 )
             },
-            isError = !isCountValid(value),
+            suffix = max?.let { { Text(stringResource(R.string.value_of_max_suffix, it)) } },
+            isError = !isCountValid(value) || isOverMax,
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
             leadingIcon = {
-                IconButton(onClick = { onValueChange((current - 1).coerceAtLeast(0).toString()) }) {
+                IconButton(onClick = { onValueChange(((current ?: 0) - 1).coerceAtLeast(0).toString()) }) {
                     Icon(Icons.Filled.Remove, contentDescription = stringResource(R.string.action_decrease))
                 }
             },
             trailingIcon = {
-                IconButton(onClick = { onValueChange((current + 1).toString()) }) {
+                IconButton(
+                    onClick = {
+                        val next = (current ?: 0) + 1
+                        onValueChange((max?.let(next::coerceAtMost) ?: next).toString())
+                    },
+                ) {
                     Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.action_increase))
                 }
             },
             modifier = Modifier.fillMaxWidth(),
         )
+        if (max != null && max > 0 && current != null) {
+            LinearProgressIndicator(
+                progress = { (current.toFloat() / max).coerceIn(0f, 1f) },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                color = if (isOverMax) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+            )
+        }
     }
 }
 

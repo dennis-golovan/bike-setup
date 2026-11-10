@@ -4,6 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.bikesetup.app.data.advice.Recommendation
+import com.bikesetup.app.data.advice.SuspensionAdvisor
+import com.bikesetup.app.data.advice.Symptom
 import com.bikesetup.app.data.db.BikeEntity
 import com.bikesetup.app.data.db.LocationEntity
 import com.bikesetup.app.data.db.SetupEntity
@@ -35,11 +38,15 @@ data class SetupEditUiState(
     val settings: UserSettings = UserSettings(),
     val form: SetupForm = SetupForm(),
     val prefilledFrom: LocalDate? = null,
+    val appliedSymptom: Symptom? = null,
+    val appliedRecommendation: Recommendation? = null,
+    val startingPointFilled: Int? = null,
     val isSaving: Boolean = false,
     val isSaved: Boolean = false,
 ) {
     val shockType: ShockType get() = bike?.shockType ?: ShockType.AIR
-    val canSave: Boolean get() = !isLoading && !isSaving && !form.hasErrors
+    val canSave: Boolean
+        get() = !isLoading && !isSaving && !form.hasErrors && bike?.let { !form.exceedsLimits(it) } != false
 }
 
 @HiltViewModel
@@ -74,7 +81,14 @@ class SetupEditViewModel @Inject constructor(
             route.copyFromId != null -> setupRepository.get(route.copyFromId)
             else -> setupRepository.getLatestForBike(route.bikeId)
         }
-        val form = current?.toForm(settings) ?: template?.toForm(settings)?.asFreshCopy() ?: SetupForm()
+        val symptom = Symptom.entries.firstOrNull { it.name == route.symptom }
+        val recommendation = if (symptom != null && bike != null && template != null) {
+            SuspensionAdvisor.recommend(symptom, bike, template)?.takeIf { it.canApply }
+        } else {
+            null
+        }
+        val baseForm = current?.toForm(settings) ?: template?.toForm(settings)?.asFreshCopy() ?: SetupForm()
+        val form = recommendation?.let(baseForm::withRecommendation) ?: baseForm
         _state.update {
             it.copy(
                 isLoading = false,
@@ -82,12 +96,32 @@ class SetupEditViewModel @Inject constructor(
                 settings = settings,
                 form = form,
                 prefilledFrom = template?.ridingDate,
+                appliedSymptom = symptom.takeIf { recommendation != null },
+                appliedRecommendation = recommendation,
             )
         }
     }
 
     fun update(transform: SetupForm.() -> SetupForm) {
         _state.update { it.copy(form = it.form.transform()) }
+    }
+
+    fun fillStartingPoint() {
+        val bike = _state.value.bike
+        if (bike != null) {
+            _state.update {
+                val (form, filled) = it.form.withStartingPoint(bike)
+                it.copy(form = form, startingPointFilled = filled)
+            }
+        }
+    }
+
+    fun startingPointShown() {
+        _state.update { it.copy(startingPointFilled = null) }
+    }
+
+    fun setNotesIfEmpty(notes: String) {
+        update { if (this.notes.isBlank()) copy(notes = notes) else this }
     }
 
     fun addLocation(name: String, terrainType: TerrainType) {

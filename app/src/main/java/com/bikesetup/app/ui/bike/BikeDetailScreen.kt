@@ -36,10 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bikesetup.app.R
+import com.bikesetup.app.data.advice.CLICK_ADJUSTERS
+import com.bikesetup.app.data.advice.isEnabled
+import com.bikesetup.app.data.advice.maxClicks
 import com.bikesetup.app.data.db.BikeEntity
+import com.bikesetup.app.data.db.SuspensionSpec
 import com.bikesetup.app.data.model.ShockType
 import com.bikesetup.app.data.model.UserSettings
 import com.bikesetup.app.ui.common.labelRes
+import com.bikesetup.app.ui.common.shortLabelRes
 import com.bikesetup.app.ui.components.BackButton
 import com.bikesetup.app.ui.components.ConfirmDeleteDialog
 import com.bikesetup.app.ui.components.EmptyState
@@ -122,9 +127,13 @@ private fun BikeInfoCard(bike: BikeEntity) {
         if (bike.forkModel.isNotBlank()) {
             ValueRow(stringResource(R.string.bike_fork_model), bike.forkModel)
         }
+        ValueRow(stringResource(R.string.bike_fork_adjusters), adjustersSummary(bike.forkSpec))
         ValueRow(stringResource(R.string.bike_shock_type), stringResource(bike.shockType.labelRes()))
         if (bike.shockType != ShockType.NONE && bike.shockModel.isNotBlank()) {
             ValueRow(stringResource(R.string.bike_shock_model), bike.shockModel)
+        }
+        if (bike.shockType != ShockType.NONE) {
+            ValueRow(stringResource(R.string.bike_shock_adjusters), adjustersSummary(bike.shockSpec))
         }
         if (bike.notes.isNotBlank()) {
             Text(bike.notes, style = MaterialTheme.typography.bodyMedium)
@@ -168,3 +177,13 @@ private fun SetupGroupSection(
         }
     }
 }
+
+@Composable
+private fun adjustersSummary(spec: SuspensionSpec): String = CLICK_ADJUSTERS
+    .filter { spec.isEnabled(it) }
+    .map { adjuster ->
+        val label = stringResource(adjuster.shortLabelRes(spec))
+        spec.maxClicks(adjuster)?.let { "$label $it" } ?: label
+    }
+    .joinToString(" · ")
+    .ifEmpty { stringResource(R.string.value_missing) }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.bikesetup.app.data.db.BikeEntity
+import com.bikesetup.app.data.db.SuspensionSpec
 import com.bikesetup.app.data.model.BikeType
 import com.bikesetup.app.data.model.ShockType
 import com.bikesetup.app.data.model.WheelSize
@@ -28,7 +29,11 @@ data class BikeForm(
     val shockModel: String = "",
     val shockType: ShockType = ShockType.AIR,
     val notes: String = "",
-)
+    val forkSpec: SpecForm = SpecForm(),
+    val shockSpec: SpecForm = SpecForm(),
+) {
+    val isValid: Boolean get() = name.isNotBlank() && forkSpec.isValid && (shockType == ShockType.NONE || shockSpec.isValid)
+}
 
 data class BikeEditUiState(
     val form: BikeForm = BikeForm(),
@@ -37,7 +42,7 @@ data class BikeEditUiState(
     val isSaving: Boolean = false,
     val isSaved: Boolean = false,
 ) {
-    val canSave: Boolean get() = form.name.isNotBlank() && !isSaving
+    val canSave: Boolean get() = form.isValid && !isSaving
 }
 
 @HiltViewModel
@@ -92,6 +97,8 @@ private fun BikeEntity.toForm() = BikeForm(
     shockModel = shockModel,
     shockType = shockType,
     notes = notes,
+    forkSpec = forkSpec.toForm(),
+    shockSpec = shockSpec.toForm(),
 )
 
 private fun BikeForm.toEntity(id: String, createdAt: Long, updatedAt: Long) = BikeEntity(
@@ -105,4 +112,6 @@ private fun BikeForm.toEntity(id: String, createdAt: Long, updatedAt: Long) = Bi
     notes = notes.trim(),
     createdAt = createdAt,
     updatedAt = updatedAt,
+    forkSpec = forkSpec.toSpec(),
+    shockSpec = if (shockType == ShockType.NONE) SuspensionSpec() else shockSpec.toSpec(),
 )

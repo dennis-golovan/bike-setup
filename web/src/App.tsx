@@ -1,5 +1,6 @@
 import { createHashRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
+import { AdvicePage } from './pages/AdvicePage';
 import { BikeDetailPage } from './pages/BikeDetailPage';
 import { BikeEditPage } from './pages/BikeEditPage';
 import { BikeListPage } from './pages/BikeListPage';
@@ -17,6 +18,7 @@ const router = createHashRouter([
   { path: '/bike/:bikeId/setup/new', element: <SetupEditPage /> },
   { path: '/setup/:setupId', element: <SetupDetailPage /> },
   { path: '/setup/:setupId/edit', element: <SetupEditPage /> },
+  { path: '/setup/:setupId/advice', element: <AdvicePage /> },
   { path: '/locations', element: <LocationListPage /> },
   { path: '/location/new', element: <LocationEditPage /> },
   { path: '/location/:locationId', element: <LocationEditPage /> },

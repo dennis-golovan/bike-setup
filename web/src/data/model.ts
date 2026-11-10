@@ -21,6 +21,28 @@ export interface Syncable {
   deletedAt: number | null;
 }
 
+export interface SuspensionSpec {
+  lsrEnabled: boolean;
+  lsrMax: number | null;
+  hsrEnabled: boolean;
+  hsrMax: number | null;
+  lscEnabled: boolean;
+  lscMax: number | null;
+  hscEnabled: boolean;
+  hscMax: number | null;
+}
+
+export const defaultSpec = (): SuspensionSpec => ({
+  lsrEnabled: true,
+  lsrMax: null,
+  hsrEnabled: false,
+  hsrMax: null,
+  lscEnabled: true,
+  lscMax: null,
+  hscEnabled: true,
+  hscMax: null,
+});
+
 export interface Bike extends Syncable {
   name: string;
   type: BikeType;
@@ -29,6 +51,8 @@ export interface Bike extends Syncable {
   shockModel: string;
   shockType: ShockType;
   notes: string;
+  forkSpec: SuspensionSpec;
+  shockSpec: SuspensionSpec;
 }
 
 export interface RidingLocation extends Syncable {
@@ -44,6 +68,7 @@ export interface ForkSettings {
   sagPercent: number | null;
   tokens: number | null;
   rebound: number | null;
+  hsr: number | null;
   lsc: number | null;
   hsc: number | null;
 }
@@ -54,6 +79,7 @@ export interface ShockSettings {
   sagPercent: number | null;
   tokens: number | null;
   rebound: number | null;
+  hsr: number | null;
   lsc: number | null;
   hsc: number | null;
 }
@@ -99,6 +125,7 @@ export const EMPTY_SHOCK: ShockSettings = {
   sagPercent: null,
   tokens: null,
   rebound: null,
+  hsr: null,
   lsc: null,
   hsc: null,
 };

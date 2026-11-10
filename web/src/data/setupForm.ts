@@ -1,5 +1,21 @@
 import {
+  CLICK_ADJUSTERS,
+  SUSPENSION_ENDS,
+  forkSag,
+  hasEnd,
+  isAvailable,
+  maxClicks,
+  middle,
+  sagTarget,
+  shockSag,
+  specOf,
+  type Adjuster,
+  type Recommendation,
+  type SuspensionEnd,
+} from './advice';
+import {
   EMPTY_SHOCK,
+  type Bike,
   type PressureUnit,
   type Setup,
   type ShockType,
@@ -30,6 +46,7 @@ export interface SetupForm {
   forkSag: string;
   forkTokens: string;
   forkRebound: string;
+  forkHsr: string;
   forkLsc: string;
   forkHsc: string;
   shockPressure: string;
@@ -37,6 +54,7 @@ export interface SetupForm {
   shockSag: string;
   shockTokens: string;
   shockRebound: string;
+  shockHsr: string;
   shockLsc: string;
   shockHsc: string;
   frontTirePressure: string;
@@ -59,6 +77,7 @@ export const emptySetupForm = (): SetupForm => ({
   forkSag: '',
   forkTokens: '',
   forkRebound: '',
+  forkHsr: '',
   forkLsc: '',
   forkHsc: '',
   shockPressure: '',
@@ -66,6 +85,7 @@ export const emptySetupForm = (): SetupForm => ({
   shockSag: '',
   shockTokens: '',
   shockRebound: '',
+  shockHsr: '',
   shockLsc: '',
   shockHsc: '',
   frontTirePressure: '',
@@ -91,11 +111,13 @@ const DECIMAL_FIELDS = [
 const COUNT_FIELDS = [
   'forkTokens',
   'forkRebound',
+  'forkHsr',
   'forkLsc',
   'forkHsc',
   'shockSpringRate',
   'shockTokens',
   'shockRebound',
+  'shockHsr',
   'shockLsc',
   'shockHsc',
 ] as const;
@@ -140,6 +162,7 @@ export function setupToForm(setup: Setup, settings: UserSettings): SetupForm {
     forkSag: decimalText(setup.fork.sagPercent, 1),
     forkTokens: countText(setup.fork.tokens),
     forkRebound: countText(setup.fork.rebound),
+    forkHsr: countText(setup.fork.hsr ?? null),
     forkLsc: countText(setup.fork.lsc),
     forkHsc: countText(setup.fork.hsc),
     shockPressure: pressureText(setup.shock.pressureBar, settings.suspensionPressureUnit),
@@ -147,6 +170,7 @@ export function setupToForm(setup: Setup, settings: UserSettings): SetupForm {
     shockSag: decimalText(setup.shock.sagPercent, 1),
     shockTokens: countText(setup.shock.tokens),
     shockRebound: countText(setup.shock.rebound),
+    shockHsr: countText(setup.shock.hsr ?? null),
     shockLsc: countText(setup.shock.lsc),
     shockHsc: countText(setup.shock.hsc),
     frontTirePressure: pressureText(setup.tires.frontPressureBar, settings.tirePressureUnit),
@@ -188,6 +212,7 @@ export function formToSetup(
       sagPercent: parseDecimal(form.forkSag),
       tokens: parseCount(form.forkTokens),
       rebound: parseCount(form.forkRebound),
+      hsr: parseCount(form.forkHsr),
       lsc: parseCount(form.forkLsc),
       hsc: parseCount(form.forkHsc),
     },
@@ -200,6 +225,7 @@ export function formToSetup(
             sagPercent: parseDecimal(form.shockSag),
             tokens: isAir ? parseCount(form.shockTokens) : null,
             rebound: parseCount(form.shockRebound),
+            hsr: parseCount(form.shockHsr),
             lsc: parseCount(form.shockLsc),
             hsc: parseCount(form.shockHsc),
           },
@@ -214,4 +240,55 @@ export function formToSetup(
     },
     notes: form.notes.trim(),
   };
+}
+
+const FIELDS: Record<SuspensionEnd, Record<Adjuster, keyof SetupForm>> = {
+  FORK: { TOKENS: 'forkTokens', LSR: 'forkRebound', HSR: 'forkHsr', LSC: 'forkLsc', HSC: 'forkHsc' },
+  SHOCK: { TOKENS: 'shockTokens', LSR: 'shockRebound', HSR: 'shockHsr', LSC: 'shockLsc', HSC: 'shockHsc' },
+};
+
+export const clicksField = (end: SuspensionEnd, adjuster: Adjuster): keyof SetupForm => FIELDS[end][adjuster];
+
+export const clicksText = (form: SetupForm, end: SuspensionEnd, adjuster: Adjuster): string =>
+  form[FIELDS[end][adjuster]] as string;
+
+export const withClicks = (form: SetupForm, end: SuspensionEnd, adjuster: Adjuster, value: string): SetupForm => ({
+  ...form,
+  [FIELDS[end][adjuster]]: value,
+});
+
+export function exceedsLimits(form: SetupForm, bike: Bike): boolean {
+  return SUSPENSION_ENDS.some((end) =>
+    CLICK_ADJUSTERS.some((adjuster) => {
+      const max = maxClicks(specOf(bike, end), adjuster);
+      const value = parseCount(clicksText(form, end, adjuster));
+      return isAvailable(bike, end, adjuster) && max !== null && value !== null && value > max;
+    }),
+  );
+}
+
+export const withRecommendation = (form: SetupForm, r: Recommendation): SetupForm =>
+  r.to === null ? form : withClicks(form, r.end, r.adjuster, String(r.to));
+
+export function withStartingPoint(form: SetupForm, bike: Bike): { form: SetupForm; filled: number } {
+  let next = form;
+  let filled = 0;
+  SUSPENSION_ENDS.filter((end) => hasEnd(bike, end)).forEach((end) => {
+    CLICK_ADJUSTERS.forEach((adjuster) => {
+      const max = maxClicks(specOf(bike, end), adjuster);
+      if (isAvailable(bike, end, adjuster) && max !== null && clicksText(next, end, adjuster).trim() === '') {
+        next = withClicks(next, end, adjuster, String(middle(max)));
+        filled += 1;
+      }
+    });
+  });
+  if (next.forkSag.trim() === '') {
+    next = { ...next, forkSag: formatDecimal(sagTarget(forkSag(bike.type)), 1) };
+    filled += 1;
+  }
+  if (hasEnd(bike, 'SHOCK') && next.shockSag.trim() === '') {
+    next = { ...next, shockSag: formatDecimal(sagTarget(shockSag(bike.type)), 1) };
+    filled += 1;
+  }
+  return { form: next, filled };
 }

@@ -88,6 +88,7 @@ test('records a bike, a location and setups like on a phone', async ({ page, con
   await expect(page.getByLabel('Широта')).toHaveValue('48.3592');
   await expect(page.getByRole('link', { name: 'На мапі' })).toHaveAttribute('href', /48\.3592/);
   await page.getByRole('button', { name: 'Зберегти' }).click();
+  await expect(page.getByRole('heading', { name: 'Місцевості', exact: true })).toBeVisible();
 
   await page.reload();
   await expect(page.getByText('Bukovel')).toBeVisible();

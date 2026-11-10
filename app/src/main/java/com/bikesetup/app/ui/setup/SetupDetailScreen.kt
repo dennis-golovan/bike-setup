@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,14 +31,22 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bikesetup.app.R
+import com.bikesetup.app.data.advice.Adjuster
+import com.bikesetup.app.data.advice.SuspensionEnd
+import com.bikesetup.app.data.advice.maxClicks
+import com.bikesetup.app.data.advice.spec
+import com.bikesetup.app.data.advice.value
 import com.bikesetup.app.data.db.BikeEntity
+import com.bikesetup.app.data.db.SetupEntity
 import com.bikesetup.app.data.db.SetupWithLocation
 import com.bikesetup.app.data.model.ShockType
 import com.bikesetup.app.data.model.UserSettings
+import com.bikesetup.app.ui.common.clicksValue
 import com.bikesetup.app.ui.common.formatDate
 import com.bikesetup.app.ui.common.labelRes
 import com.bikesetup.app.ui.common.percentValue
 import com.bikesetup.app.ui.common.pressureValue
+import com.bikesetup.app.ui.common.shortLabelRes
 import com.bikesetup.app.ui.common.temperatureValue
 import com.bikesetup.app.ui.common.weightValue
 import com.bikesetup.app.ui.components.BackButton
@@ -51,6 +60,7 @@ fun SetupDetailScreen(
     onBack: () -> Unit,
     onEdit: (bikeId: String, setupId: String) -> Unit,
     onCopy: (bikeId: String, setupId: String) -> Unit,
+    onAdvice: (setupId: String) -> Unit,
     viewModel: SetupDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -80,6 +90,9 @@ fun SetupDetailScreen(
                 navigationIcon = { BackButton(onBack) },
                 actions = {
                     if (item != null) {
+                        IconButton(onClick = { onAdvice(item.setup.id) }) {
+                            Icon(Icons.Filled.Tune, contentDescription = stringResource(R.string.advice_title))
+                        }
                         IconButton(onClick = { onCopy(item.setup.bikeId, item.setup.id) }) {
                             Icon(Icons.Filled.ContentCopy, contentDescription = stringResource(R.string.setup_copy))
                         }
@@ -131,10 +144,7 @@ private fun SetupDetailContent(item: SetupWithLocation, bike: BikeEntity, settin
             rows = listOfNotNull(
                 setup.fork.pressureBar?.let { stringResource(R.string.field_pressure) to pressureValue(it, suspensionUnit) },
                 setup.fork.sagPercent?.let { stringResource(R.string.field_sag) to percentValue(it) },
-                setup.fork.tokens?.let { stringResource(R.string.field_tokens) to it.toString() },
-                setup.fork.rebound?.let { stringResource(R.string.field_rebound) to it.toString() },
-                setup.fork.lsc?.let { stringResource(R.string.field_lsc) to it.toString() },
-                setup.fork.hsc?.let { stringResource(R.string.field_hsc) to it.toString() },
+                *adjusterRows(SuspensionEnd.FORK, setup, bike).toTypedArray(),
             ),
         )
         if (bike.shockType != ShockType.NONE) {
@@ -145,10 +155,7 @@ private fun SetupDetailContent(item: SetupWithLocation, bike: BikeEntity, settin
                     setup.shock.pressureBar?.takeIf { isAir }?.let { stringResource(R.string.field_pressure) to pressureValue(it, suspensionUnit) },
                     setup.shock.springRateLbs?.takeIf { !isAir }?.let { stringResource(R.string.field_spring_rate) to stringResource(R.string.value_spring_rate, it) },
                     setup.shock.sagPercent?.let { stringResource(R.string.field_sag) to percentValue(it) },
-                    setup.shock.tokens?.takeIf { isAir }?.let { stringResource(R.string.field_tokens) to it.toString() },
-                    setup.shock.rebound?.let { stringResource(R.string.field_rebound) to it.toString() },
-                    setup.shock.lsc?.let { stringResource(R.string.field_lsc) to it.toString() },
-                    setup.shock.hsc?.let { stringResource(R.string.field_hsc) to it.toString() },
+                    *adjusterRows(SuspensionEnd.SHOCK, setup, bike).toTypedArray(),
                 ),
             )
         }
@@ -184,5 +191,15 @@ private fun DetailSection(title: String, rows: List<Pair<String, String>>) {
             )
         }
         rows.forEach { (label, value) -> ValueRow(label, value) }
+    }
+}
+
+@Composable
+private fun adjusterRows(end: SuspensionEnd, setup: SetupEntity, bike: BikeEntity): List<Pair<String, String>?> {
+    val spec = bike.spec(end)
+    return listOf(Adjuster.TOKENS, Adjuster.LSR, Adjuster.HSR, Adjuster.LSC, Adjuster.HSC).map { adjuster ->
+        setup.value(end, adjuster)?.let { value ->
+            stringResource(adjuster.shortLabelRes(spec)) to clicksValue(value, spec.maxClicks(adjuster))
+        }
     }
 }

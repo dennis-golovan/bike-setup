@@ -15,6 +15,7 @@ export interface I18n {
   formatDate: (iso: string) => string;
   setupCount: (count: number) => string;
   tokenCount: (count: number) => string;
+  clickCount: (count: number) => string;
 }
 
 const DICTIONARIES: Record<Language, Dictionary> = { uk, en, de };
@@ -42,6 +43,7 @@ export function createI18n(language: Language): I18n {
     },
     setupCount: (count) => plural(count, t.setupForms),
     tokenCount: (count) => plural(count, t.tokenForms),
+    clickCount: (count) => plural(count, t.clickForms),
   };
 }
 

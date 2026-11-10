@@ -12,7 +12,35 @@ import {
   type UserSettings,
   type Weather,
 } from '../data/model';
-import { asFreshCopy, emptySetupForm, formToSetup, hasErrors, setupToForm, type SetupForm } from '../data/setupForm';
+import {
+  ALL_ADJUSTERS,
+  SYMPTOM_KEYS,
+  canApply,
+  forkSag,
+  isAvailable,
+  maxClicks,
+  recommend,
+  shockSag,
+  specOf,
+  type Adjuster,
+  type SagRange,
+  type SuspensionEnd,
+} from '../data/advice';
+import {
+  asFreshCopy,
+  clicksText,
+  emptySetupForm,
+  exceedsLimits,
+  formToSetup,
+  hasErrors,
+  setupToForm,
+  withClicks,
+  withRecommendation,
+  withStartingPoint,
+  type SetupForm,
+} from '../data/setupForm';
+import { adjusterShortLabel, recommendationAction } from '../ui/adviceText';
+import { Icon } from '../ui/Icon';
 import { newId, nowMillis } from '../data/units';
 import {
   DateField,
@@ -27,6 +55,7 @@ import {
   TextAction,
   TextField,
   useBack,
+  useToast,
 } from '../ui/components';
 import { useI18n } from '../ui/i18n';
 import { pressureUnitLabels } from '../ui/format';
@@ -45,10 +74,13 @@ interface Loaded {
 type Update = (patch: Partial<SetupForm>) => void;
 
 export function SetupEditPage() {
-  const { t, formatDate } = useI18n();
+  const i18n = useI18n();
+  const { t, formatDate } = i18n;
   const params = useParams();
   const [searchParams] = useSearchParams();
   const copyFromId = searchParams.get('copyFrom');
+  const symptomParam = searchParams.get('symptom');
+  const [toast, showToast] = useToast();
   const [form, setForm] = useState<SetupForm>(emptySetupForm);
   const [loaded, setLoaded] = useState<Loaded>();
   const [saving, setSaving] = useState(false);
@@ -67,21 +99,42 @@ export function SetupEditPage() {
         : copyFromId
           ? (await repo.getSetup(copyFromId))?.setup
           : await repo.latestSetupForBike(ownerId);
-      setForm(
-        existing
-          ? setupToForm(existing, settings)
-          : template
-            ? asFreshCopy(setupToForm(template, settings))
-            : emptySetupForm(),
-      );
+      const symptom = SYMPTOM_KEYS.find((key) => key === symptomParam);
+      const recommendation =
+        symptom && bike && template ? recommend(symptom, bike, template) : null;
+      const applicable = recommendation && canApply(recommendation) ? recommendation : null;
+      const baseForm = existing
+        ? setupToForm(existing, settings)
+        : template
+          ? asFreshCopy(setupToForm(template, settings))
+          : emptySetupForm();
+      const advisedForm = applicable && bike && symptom
+        ? {
+            ...withRecommendation(baseForm, applicable),
+            notes: t.adviceNote(
+              t.symptoms[symptom].label,
+              recommendationAction(applicable, specOf(bike, applicable.end), i18n),
+            ),
+          }
+        : baseForm;
+      setForm(advisedForm);
       setLoaded({ bike, existing, settings, prefilledFrom: template?.ridingDate ?? null });
     };
     void load();
-  }, [params.setupId, params.bikeId, copyFromId]);
+  }, [params.setupId, params.bikeId, copyFromId, symptomParam]);
+  const fillStartingPoint = () => {
+    const bike = loaded?.bike;
+    if (bike) {
+      const result = withStartingPoint(form, bike);
+      setForm(result.form);
+      showToast(result.filled > 0 ? t.setupStartingPointDone(result.filled) : t.setupStartingPointNothing);
+    }
+  };
   const update: Update = (patch) => setForm((current) => ({ ...current, ...patch }));
   const settings = loaded?.settings ?? DEFAULT_SETTINGS;
   const shockType = loaded?.bike?.shockType ?? 'AIR';
-  const canSave = loaded !== undefined && loaded.bike !== undefined && !saving && !hasErrors(form);
+  const canSave =
+    loaded !== undefined && loaded.bike !== undefined && !saving && !hasErrors(form) && !exceedsLimits(form, loaded.bike);
   const save = async () => {
     setSaving(true);
     const now = nowMillis();
@@ -124,6 +177,10 @@ export function SetupEditPage() {
       {loaded && (
         <div className="form">
           {loaded.prefilledFrom && <p className="hint accent">{t.setupPrefilledFrom(formatDate(loaded.prefilledFrom))}</p>}
+          <button type="button" className="outlined-action" onClick={fillStartingPoint}>
+            <Icon name="magic" size={20} />
+            {t.setupStartingPoint}
+          </button>
           <Section title={t.sectionGeneral}>
             <SelectField
               label={t.fieldLocation}
@@ -172,14 +229,8 @@ export function SetupEditPage() {
               />
               <NumberField label={t.fieldSag} value={form.forkSag} suffix="%" onChange={(forkSag) => update({ forkSag })} />
             </Row>
-            <Row>
-              <StepperField label={t.fieldTokens} value={form.forkTokens} onChange={(forkTokens) => update({ forkTokens })} />
-              <StepperField label={t.fieldRebound} value={form.forkRebound} onChange={(forkRebound) => update({ forkRebound })} />
-            </Row>
-            <Row>
-              <StepperField label={t.fieldLsc} value={form.forkLsc} onChange={(forkLsc) => update({ forkLsc })} />
-              <StepperField label={t.fieldHsc} value={form.forkHsc} onChange={(forkHsc) => update({ forkHsc })} />
-            </Row>
+            {loaded.bike && <SagHint range={forkSag(loaded.bike.type)} />}
+            {loaded.bike && <AdjusterFields end="FORK" form={form} bike={loaded.bike} setForm={setForm} />}
           </Section>
           {shockType !== 'NONE' && (
             <Section title={t.sectionShock} subtitle={t.clicksHint}>
@@ -202,20 +253,8 @@ export function SetupEditPage() {
                 )}
                 <NumberField label={t.fieldSag} value={form.shockSag} suffix="%" onChange={(shockSag) => update({ shockSag })} />
               </Row>
-              <Row>
-                {isAir && (
-                  <StepperField label={t.fieldTokens} value={form.shockTokens} onChange={(shockTokens) => update({ shockTokens })} />
-                )}
-                <StepperField
-                  label={t.fieldRebound}
-                  value={form.shockRebound}
-                  onChange={(shockRebound) => update({ shockRebound })}
-                />
-              </Row>
-              <Row>
-                <StepperField label={t.fieldLsc} value={form.shockLsc} onChange={(shockLsc) => update({ shockLsc })} />
-                <StepperField label={t.fieldHsc} value={form.shockHsc} onChange={(shockHsc) => update({ shockHsc })} />
-              </Row>
+              {loaded.bike && <SagHint range={shockSag(loaded.bike.type)} />}
+              {loaded.bike && <AdjusterFields end="SHOCK" form={form} bike={loaded.bike} setForm={setForm} />}
             </Section>
           )}
           <TireSection form={form} settings={settings} update={update} />
@@ -230,6 +269,7 @@ export function SetupEditPage() {
           </Section>
         </div>
       )}
+      {toast}
       {addingLocation && <AddLocationDialog onAdd={(n, terrain) => void addLocation(n, terrain)} onDismiss={() => setAddingLocation(false)} />}
     </Screen>
   );
@@ -297,5 +337,47 @@ function AddLocationDialog({ onAdd, onDismiss }: { onAdd: (name: string, terrain
         />
       </div>
     </Dialog>
+  );
+}
+
+function SagHint({ range }: { range: SagRange }) {
+  const { t } = useI18n();
+  return <p className="muted small">{t.setupSagTarget(range.min, range.max)}</p>;
+}
+
+function AdjusterFields({
+  end,
+  form,
+  bike,
+  setForm,
+}: {
+  end: SuspensionEnd;
+  form: SetupForm;
+  bike: Bike;
+  setForm: (update: (current: SetupForm) => SetupForm) => void;
+}) {
+  const { t } = useI18n();
+  const spec = specOf(bike, end);
+  const adjusters = ALL_ADJUSTERS.filter((adjuster) => isAvailable(bike, end, adjuster));
+  const pairs = adjusters.reduce<Adjuster[][]>(
+    (rows, adjuster, index) => (index % 2 === 0 ? [...rows, [adjuster]] : [...rows.slice(0, -1), [...rows[rows.length - 1], adjuster]]),
+    [],
+  );
+  return (
+    <>
+      {pairs.map((pair) => (
+        <Row key={pair.join('-')}>
+          {pair.map((adjuster) => (
+            <StepperField
+              key={adjuster}
+              label={adjusterShortLabel(adjuster, spec, t)}
+              value={clicksText(form, end, adjuster)}
+              max={maxClicks(spec, adjuster)}
+              onChange={(value) => setForm((current) => withClicks(current, end, adjuster, value))}
+            />
+          ))}
+        </Row>
+      ))}
+    </>
   );
 }

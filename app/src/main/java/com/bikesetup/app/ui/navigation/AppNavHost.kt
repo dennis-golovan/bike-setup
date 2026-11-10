@@ -14,6 +14,7 @@ import com.bikesetup.app.ui.bike.BikeListScreen
 import com.bikesetup.app.ui.location.LocationEditScreen
 import com.bikesetup.app.ui.location.LocationListScreen
 import com.bikesetup.app.ui.settings.SettingsScreen
+import com.bikesetup.app.ui.setup.AdviceScreen
 import com.bikesetup.app.ui.setup.SetupDetailScreen
 import com.bikesetup.app.ui.setup.SetupEditScreen
 
@@ -45,6 +46,15 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 onBack = { navController.popFrom(entry) },
                 onEdit = { bikeId, setupId -> navController.navigate(SetupEditRoute(bikeId, setupId = setupId)) },
                 onCopy = { bikeId, setupId -> navController.navigate(SetupEditRoute(bikeId, copyFromId = setupId)) },
+                onAdvice = { setupId -> navController.navigate(AdviceRoute(setupId)) },
+            )
+        }
+        composable<AdviceRoute> { entry ->
+            AdviceScreen(
+                onBack = { navController.popFrom(entry) },
+                onApply = { bikeId, setupId, symptom ->
+                    navController.navigate(SetupEditRoute(bikeId, copyFromId = setupId, symptom = symptom.name))
+                },
             )
         }
         composable<SetupEditRoute> { entry ->

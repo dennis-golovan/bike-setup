@@ -1,5 +1,6 @@
 package com.bikesetup.app.data.db
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Index
@@ -24,6 +25,19 @@ data class BikeEntity(
     val createdAt: Long,
     val updatedAt: Long,
     val deletedAt: Long? = null,
+    @Embedded(prefix = "fork_spec_") val forkSpec: SuspensionSpec = SuspensionSpec(),
+    @Embedded(prefix = "shock_spec_") val shockSpec: SuspensionSpec = SuspensionSpec(),
+)
+
+data class SuspensionSpec(
+    @ColumnInfo(defaultValue = "1") val lsrEnabled: Boolean = true,
+    val lsrMax: Int? = null,
+    @ColumnInfo(defaultValue = "0") val hsrEnabled: Boolean = false,
+    val hsrMax: Int? = null,
+    @ColumnInfo(defaultValue = "1") val lscEnabled: Boolean = true,
+    val lscMax: Int? = null,
+    @ColumnInfo(defaultValue = "1") val hscEnabled: Boolean = true,
+    val hscMax: Int? = null,
 )
 
 @Entity(tableName = "locations")
@@ -44,6 +58,7 @@ data class ForkSettings(
     val sagPercent: Double? = null,
     val tokens: Int? = null,
     val rebound: Int? = null,
+    val hsr: Int? = null,
     val lsc: Int? = null,
     val hsc: Int? = null,
 )
@@ -54,6 +69,7 @@ data class ShockSettings(
     val sagPercent: Double? = null,
     val tokens: Int? = null,
     val rebound: Int? = null,
+    val hsr: Int? = null,
     val lsc: Int? = null,
     val hsc: Int? = null,
 )

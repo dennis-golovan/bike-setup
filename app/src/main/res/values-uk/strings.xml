@@ -143,4 +143,74 @@
         <item quantity="many">%d токенів</item>
         <item quantity="other">%d токена</item>
     </plurals>
+    <string name="adjuster_lsr_full">Відскок (LSR)</string>
+    <string name="adjuster_hsr_full">Швидкісний відскок (HSR)</string>
+    <string name="adjuster_lsc_full">Повільна компресія (LSC)</string>
+    <string name="adjuster_hsc_full">Швидка компресія (HSC)</string>
+    <string name="bike_fork_adjusters">Регулювання вилки</string>
+    <string name="bike_shock_adjusters">Регулювання амортизатора</string>
+    <string name="bike_adjusters_hint">Увімкни регулювання, які є на демпфері, і вкажи, скільки клацань у кожного від повністю закритого до повністю відкритого. Максимум можна не вказувати.</string>
+    <string name="field_max_clicks">Макс.</string>
+    <string name="setup_starting_point">Заповнити стартові значення</string>
+    <string name="setup_starting_point_done">Заповнено: %1$d. Клацання — середина діапазону, sag — рекомендована ціль.</string>
+    <string name="setup_starting_point_nothing">Нічого заповнювати: поля вже заповнені або у велосипеді не вказано максимум клацань.</string>
+    <string name="setup_sag_target">Рекомендовано для цього типу байка: %1$d–%2$d%%</string>
+    <string name="advice_title">Що не так?</string>
+    <string name="advice_intro">Обери, що відчуваєш на трасі. Порада рахується від цього сетапу. Міняй одне налаштування за раз і записуй, як їхало.</string>
+    <string name="advice_what_to_do">Що спробувати</string>
+    <string name="advice_why">Чому</string>
+    <string name="advice_apply">Створити сетап із цією зміною</string>
+    <string name="advice_no_adjuster">На твоїй підвісці немає регулювання для цього. Спершу перевір sag і тиск.</string>
+    <string name="advice_at_limit">Це регулювання вже на межі. Перевір sag і тиск, або, можливо, демпферу потрібен сервіс.</string>
+    <string name="advice_unknown_value">У цьому сетапі не записано %1$s. Заповни його, щоб зміна застосувалась автоматично.</string>
+    <string name="advice_change_of_max">%1$s → %2$s з %3$d</string>
+    <string name="advice_note">Пробую: %1$s. %2$s</string>
+    <string name="symptom_fork_kicks_back">Вилку викидає після приземлень і великих ударів</string>
+    <string name="symptom_fork_kicks_back_why">Вилка повертається надто швидко після глибокого стиснення. Більше демпфування відскоку її заспокоїть.</string>
+    <string name="symptom_fork_packs_down">Вилка просідає на серії ударів і не встигає повернутися</string>
+    <string name="symptom_fork_packs_down_why">Відскок надто повільний: вилка не встигає повернутися до наступного удару. Менше демпфування поверне її швидше.</string>
+    <string name="symptom_fork_harsh">Жорстко на коренях і камінні, втомлюються руки</string>
+    <string name="symptom_fork_harsh_why">Швидкі дрібні удари впираються в надто сильну компресію. Якщо відкрити швидку компресію, вилка почне їх ковтати.</string>
+    <string name="symptom_fork_bottoms_out">Вилка пробиває на великих ударах</string>
+    <string name="symptom_fork_bottoms_out_why">Кінець ходу недостатньо прогресивний. Токен робить його жорсткішим, не змінюючи sag; допомагає також сильніша компресія.</string>
+    <string name="symptom_fork_unused_travel">Вилка ніколи не використовує весь хід</string>
+    <string name="symptom_fork_unused_travel_why">Кінець ходу надто прогресивний або компресія надто сильна. Прибери токен або відкрий компресію.</string>
+    <string name="symptom_fork_dives">Вилка ниряє на гальмах і крутих спусках</string>
+    <string name="symptom_fork_dives_why">Повільне перенесення ваги продавлює вилку. Сильніша повільна компресія тримає її вище в ході.</string>
+    <string name="symptom_shock_kicks_back">Задню частину підкидає після стрибків і дропів</string>
+    <string name="symptom_shock_kicks_back_why">Амортизатор повертається надто швидко після глибокого стиснення. Більше демпфування відскоку тримає заднє колесо на землі.</string>
+    <string name="symptom_shock_packs_down">Задня підвіска просідає на серії ударів</string>
+    <string name="symptom_shock_packs_down_why">Відскок надто повільний для серії ударів. Менше демпфування дасть амортизатору повернутися між ними.</string>
+    <string name="symptom_shock_harsh">Задня підвіска жорстка на дрібних нерівностях</string>
+    <string name="symptom_shock_harsh_why">Компресія надто сильна для швидких дрібних ударів. Відкрий швидку компресію.</string>
+    <string name="symptom_shock_bottoms_out">Амортизатор жорстко пробиває</string>
+    <string name="symptom_shock_bottoms_out_why">Бракує підтримки в кінці ходу. Додай токен (для повітряного амортизатора) або посиль компресію.</string>
+    <string name="symptom_shock_unused_travel">Амортизатор ніколи не використовує весь хід</string>
+    <string name="symptom_shock_unused_travel_why">Кінець ходу надто прогресивний або компресія надто сильна. Прибери токен або відкрий компресію.</string>
+    <string name="symptom_shock_bobs">Задню частину розгойдує при педалюванні</string>
+    <string name="symptom_shock_bobs_why">Зусилля педалювання — це повільні рухи. Сильніша повільна компресія їх гасить; на підйомах так само працює climb-перемикач, якщо він є.</string>
+    <plurals name="advice_close">
+        <item quantity="one">%1$s: закрити на %2$d клацання</item>
+        <item quantity="few">%1$s: закрити на %2$d клацання</item>
+        <item quantity="many">%1$s: закрити на %2$d клацань</item>
+        <item quantity="other">%1$s: закрити на %2$d клацання</item>
+    </plurals>
+    <plurals name="advice_open">
+        <item quantity="one">%1$s: відкрити на %2$d клацання</item>
+        <item quantity="few">%1$s: відкрити на %2$d клацання</item>
+        <item quantity="many">%1$s: відкрити на %2$d клацань</item>
+        <item quantity="other">%1$s: відкрити на %2$d клацання</item>
+    </plurals>
+    <plurals name="advice_add_token">
+        <item quantity="one">Додати %1$d токен</item>
+        <item quantity="few">Додати %1$d токени</item>
+        <item quantity="many">Додати %1$d токенів</item>
+        <item quantity="other">Додати %1$d токена</item>
+    </plurals>
+    <plurals name="advice_remove_token">
+        <item quantity="one">Прибрати %1$d токен</item>
+        <item quantity="few">Прибрати %1$d токени</item>
+        <item quantity="many">Прибрати %1$d токенів</item>
+        <item quantity="other">Прибрати %1$d токена</item>
+    </plurals>
 </resources>
